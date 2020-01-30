@@ -12,9 +12,10 @@ def callback(recognizer, audio):
         # for testing purposes, we're just using the default API key
         # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
         # instead of `r.recognize_google(audio)`
-        print("Google Speech Recognition thinks you said " + recognizer.recognize_google(audio))
+        speech = recognizer.recognize_google(audio)
+        print("You said " + speech )
     except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
+        print("Could not understand audio.")
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
@@ -24,13 +25,15 @@ def callback(recognizer, audio):
 
 
 def main():
-    print("Louis is starting....")
+    print("Louis has started. Listening for voice commands ...")
     
-with m as source:
-    r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
+    with m as source:
+        r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
+
 
 # start listening in the background (note that we don't have to do this inside a `with` statement)
-stop_listening = r.listen_in_background(m, callback)
+    stop_listening = r.listen_in_background(m, callback)
+    for _ in range(50): time.sleep(1)
 
 if __name__ == "__main__":
     main()
