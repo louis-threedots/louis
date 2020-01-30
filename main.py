@@ -1,9 +1,7 @@
 
 import time
 import speech_recognition as sr
-
-r = sr.Recognizer()
-m = sr.Microphone() # Set appropriate device index, e.g `device_index=3`.
+from audio import Audio
 
 # this is called from the background thread
 def callback(recognizer, audio):
@@ -32,13 +30,8 @@ def callback(recognizer, audio):
 
 def main():
     print("Louis has started. Listening for voice commands ...")
-    
-    with m as source:
-        r.adjust_for_ambient_noise(source)  # we only need to calibrate once, before we start listening
-
-
-# start listening in the background (note that we don't have to do this inside a `with` statement)
-    stop_listening = r.listen_in_background(m, callback)
+    audio = Audio()
+    audio.start_background_listening(callback)
     while (True): time.sleep(1)
 
 if __name__ == "__main__":
