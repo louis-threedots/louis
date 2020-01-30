@@ -1,6 +1,4 @@
 class Cell:
-    
-
 
     def __init__(self):
         self.state = [0,0,0,0,0,0]
