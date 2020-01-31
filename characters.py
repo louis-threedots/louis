@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 characters = {
     'a': [1, 0, 0, 0, 0, 0],
     'b': [1, 1, 0, 0, 0, 0],
@@ -54,5 +55,26 @@ characters = {
     ' ': [0, 0, 0, 0, 0, 0],
     'CAPITAL': [0, 0, 0, 0, 0, 1],
     'LETTER': [0, 0, 0, 0, 1, 1],
-    'NUMBER': [0, 0, 1, 1, 1, 1]
+    'NUMBER': [0, 0, 1, 1, 1, 1],
+    'ou': [1, 1, 0, 0, 1, 1]
 }
+
+degrees = {
+    '000': 0,
+    '001': 45,
+    '010': 90,
+    '101': 135,
+    '011': 180,
+    '111': 225,
+    '110': 270,
+    '100': 300,
+}
+
+def character_degrees(character):
+    list_of_pins = characters[character]
+    first_three = list_of_pins[:3]
+    second_three = list_of_pins[3:]
+    first_three_str = ''.join(str(pin) for pin in first_three)
+    second_three_str = ''.join(str(pin) for pin in second_three)
+
+    return [degrees[first_three_str], degrees[second_three_str]]
