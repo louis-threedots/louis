@@ -4,9 +4,10 @@ import speech_recognition as sr
 # Abstract class that defines the methods amd attributes of Braille Apps. 
 class App(ABC):
 
-    def __init__(self, cells, audio):
+    def __init__(self, name, cells, audio):
         self.cells = cells
         self.audio = self.audio
+        self.name = name
 
 
     @abstractmethod
