@@ -4,7 +4,7 @@ import speech_recognition as sr
 
 
 
-class Audio():
+claoss Audio():
 
     def __init__(self):
         self.recognizer =  sr.Recognizer()
