@@ -16,8 +16,12 @@ jobs:
              activate-environment: louis
              environment-file: environment.yml
              auto-activate-base: false
-        - shell: bash
+        - name: conda
+          shell: bash
           run: |
             conda info
             conda list
+        - name: conda
+          shell: bash
+          run: |
             python -m compileall
