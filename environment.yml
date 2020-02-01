@@ -1,5 +1,5 @@
 name: louis
 dependencies:
   - python=3.6
-  - speechrecognition
+  - conda-forge::speechrecognition
   - pyaudio
