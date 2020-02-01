@@ -67,7 +67,7 @@ degrees = {
     '011': 180,
     '111': 225,
     '110': 270,
-    '100': 300,
+    '100': 315,
 }
 
 def character_degrees(character):

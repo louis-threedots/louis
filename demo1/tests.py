@@ -4,7 +4,7 @@ from functions import *
 if not (m.connected):
         print ('Plug a motor into port A')
 else:
-        for letter in ['l', 'ou', 'i', 's']:
+        for letter in "abcdefghijklmnopqrstuvwxyz":
                 print('Ready for next letter')
                 while not b.is_pressed:
                         pass
