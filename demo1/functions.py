@@ -1,6 +1,7 @@
 #! /usr/bin/python3
-import ev3dev.ev3 as ev3
 import time
+start = time.time()
+import ev3dev.ev3 as ev3
 import characters
 
 # TO RUN ON EV3:
