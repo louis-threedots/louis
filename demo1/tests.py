@@ -14,7 +14,8 @@ else:
                 degrees = get_degrees(letter)
                 rotate_to_angle(m,degrees[0])
                 rotate_to_angle(m,degrees[1])
-                print("\n :) !!Printed letter: ", letter,"\n")
+                print("\n :) !!Printed letter: ", letter, "\n",
+                    characters.characters[letter], "\n")
 
         end = time.time()
         print("\nTime program:" + str(end - start_tests))
