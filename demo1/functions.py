@@ -23,6 +23,7 @@ import characters
 
 m=ev3.LargeMotor ('outA')
 b=ev3.TouchSensor('in1')
+catch_pos = 360
 
 def rotate_to_angle(m,x):
         print("Turning to angle:", x)
