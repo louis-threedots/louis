@@ -10,10 +10,7 @@ else:
                 print('Ready for next letter')
                 while not b.is_pressed:
                         pass
-                reset_pins(m)
-                degrees = get_degrees(letter)
-                rotate_to_angle(m,degrees[0])
-                rotate_to_angle(m,degrees[1])
+                rotate(m, letter, catch_pos)
                 print("\n :) !!Printed letter: ", letter,"\n")
 
         end = time.time()
