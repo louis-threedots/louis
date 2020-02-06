@@ -10,7 +10,7 @@ else:
                 print('Ready for next letter')
                 while not b.is_pressed:
                         pass
-                rotate(m, letter, catch_pos)
+                rotate(m, letter)
                 print("\n :) !!Printed letter: ", letter, "\n",
                     characters.characters[letter], "\n")
 
