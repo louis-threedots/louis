@@ -21,35 +21,71 @@ import characters
 # execute
 #   ./[filename]
 
-catch_pos = 360 # used as global but will be class property
+CATCH_OFFSET = 20
+
+catch = {'position': 360, 'clockwise': 1} # used as global but will be class property
 m=ev3.LargeMotor ('outA')
 b=ev3.TouchSensor('in1')
 
 def rotate(m, letter):
-        global catch_pos
-        reset_pins(m)
+        global catch, CATCH_OFFSET
         degrees = get_degrees(letter)
-        rotate_big_to_angle(m,degrees[0])
-        rotate_small_to_angle(m,degrees[1])
+        score_clockwise = [
+            (catch['position'] + catch['clockwise'] - m.position_sp) % 360 - catch['clockwise'],
+            (degrees[0] - catch['position']) % 360,
+            (degrees[0] - degrees[1]) % 360
+        ]
+        score_anti_clockwise = [
+            (m.position_sp - catch['position'] - catch['clockwise']) % 360 + catch['clockwise'],
+            (catch['position'] - degrees[0]) % 360,
+            (degrees[1] - degrees[0]) % 360
+        ]
+        print("Final values: ", sum(score_clockwise), sum(score_anti_clockwise))
+        print("Clockwise: ", score_clockwise)
+        print("Anti-clockwise: ", score_anti_clockwise)
 
-def rotate_big_to_angle(m,x):
-        global catch_pos
+        if sum(score_clockwise) <= sum(score_anti_clockwise):
+            small_angle = - score_clockwise[2]
+            if(score_clockwise[1] == 0): # big disc already in correct position
+                big_angle = 0
+            else:
+                big_angle = score_clockwise[0] + score_clockwise[1]
+        else:
+            small_angle = score_anti_clockwise[2] - CATCH_OFFSET
+            if(score_clockwise[1] == 0): # big disc already in correct position
+                big_angle = 0
+            else:
+                big_angle = - score_anti_clockwise[0] - score_anti_clockwise[1] + CATCH_OFFSET
+
+        rotate_big_to_angle(m, big_angle)
+        rotate_small_to_angle(m, small_angle)
+
+def rotate_big_to_angle(m, x):
+        global catch
         print("Turning big disc to angle:", x)
-        if x > m.position_sp:
-            angle = x - m.position_sp
-        else:
-            angle = 360 - m.position_sp + x
-        rotate_to_rel_angle(m,angle)
-        catch_pos = m.position_sp
-        print("catch_pos: ", catch_pos)
+        # if x > m.position_sp:
+        #     angle = x - m.position_sp
+        # else:
+        #     angle = 360 - m.position_sp + x
 
-def rotate_small_to_angle(m,x):
-        print("Turning small disc to angle:", x)
-        if x < m.position_sp:
-            angle = x - m.position_sp
+        rotate_to_rel_angle(m, x)
+
+        catch['position'] = m.position_sp
+        if x >= 0:
+            catch['clockwise'] = 1
         else:
-            angle = - m.position_sp - x
-        rotate_to_rel_angle(m,angle)
+            catch['clockwise'] = -1
+            catch['position'] -= CATCH_OFFSET
+        print(catch)
+
+def rotate_small_to_angle(m, x):
+        print("Turning small disc to angle:", x)
+        # if x < m.position_sp:
+        #     angle = x - m.position_sp
+        # else:
+        #     angle = - m.position_sp - x
+
+        rotate_to_rel_angle(m, x)
 
 def rotate_to_angle(m,x):
         print("Turning to angle:", x)
@@ -68,14 +104,14 @@ def rotate_to_rel_angle(m,x):
         print("pos: ", m.position_sp, m.position)
 
 def reset_pins(m):
-        if catch_pos > m.position_sp:
-            angle = catch_pos - m.position_sp
+        if catch['position'] > m.position_sp:
+            angle = catch['position'] - m.position_sp
         else:
-            angle = 360 - m.position_sp + catch_pos
+            angle = 360 - m.position_sp + catch['position']
         rotate_to_rel_angle(m, angle)
 
 def get_degrees(letter):
     degrees = characters.character_degrees(letter)
-    if degrees[1] > degrees[0]:
-            degrees[1] -= 360
+    # if degrees[1] > degrees[0]:
+    #         degrees[1] -= 360
     return degrees
