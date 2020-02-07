@@ -52,7 +52,7 @@ def rotate(m, letter):
                 big_angle = score_clockwise[0] + score_clockwise[1]
         else:
             small_angle = score_anti_clockwise[2] - CATCH_OFFSET
-            if(score_clockwise[1] == 0): # big disc already in correct position
+            if(score_anti_clockwise[1] == 0): # big disc already in correct position
                 big_angle = 0
             else:
                 big_angle = - score_anti_clockwise[0] - score_anti_clockwise[1] + CATCH_OFFSET
