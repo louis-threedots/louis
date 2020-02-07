@@ -27,7 +27,8 @@ class Audio():
         self.stop_listening
 
 
-    def speak(self, text):    
+    def speak(self, text):
+        print("speaking")
         hash_object = hashlib.md5(text.encode())
         filename = "cache/"+hash_object.hexdigest()+".mp3"
         if not(os.path.isfile(filename)):
