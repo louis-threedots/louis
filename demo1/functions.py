@@ -33,13 +33,16 @@ def rotate(m, letter):
         score_clockwise = [
             (catch['position'] + catch['clockwise'] - m.position_sp) % 360 - catch['clockwise'],
             (degrees[0] - catch['position']) % 360,
-            (degrees[0] - degrees[1]) % 360
+            (degrees[0] - degrees[1] - catch['clockwise']) % 360 + catch['clockwise']
         ]
         score_anti_clockwise = [
             (m.position_sp - catch['position'] - catch['clockwise']) % 360 + catch['clockwise'],
-            (catch['position'] - degrees[0]) % 360,
-            (degrees[1] - degrees[0]) % 360
+            (catch['position'] - degrees[0]) % 360 - CATCH_OFFSET,
+            (degrees[1] - degrees[0] + catch['clockwise']) % 360 - CATCH_OFFSET - catch['clockwise']
         ]
+        print("(", m.position_sp, "-", catch['position'], "-", catch['clockwise'], ") % 360 + ", catch['clockwise'])
+        print("(", catch['position'], "-", degrees[0], ") % 360 - ", CATCH_OFFSET)
+        print("(", degrees[1], "-", degrees[0], ") % 360 - ", CATCH_OFFSET)
         print("Final values: ", sum(score_clockwise), sum(score_anti_clockwise))
         print("Clockwise: ", score_clockwise)
         print("Anti-clockwise: ", score_anti_clockwise)
@@ -48,17 +51,23 @@ def rotate(m, letter):
             small_angle = - score_clockwise[2]
             if(score_clockwise[1] == 0): # big disc already in correct position
                 big_angle = 0
+                small_angle += score_clockwise[0]
             else:
                 big_angle = score_clockwise[0] + score_clockwise[1]
         else:
-            small_angle = score_anti_clockwise[2] - CATCH_OFFSET
+            small_angle = score_anti_clockwise[2]
             if(score_anti_clockwise[1] == 0): # big disc already in correct position
                 big_angle = 0
+                small_angle -= score_anti_clockwise[0]
             else:
-                big_angle = - score_anti_clockwise[0] - score_anti_clockwise[1] + CATCH_OFFSET
+                big_angle = - score_anti_clockwise[0] - score_anti_clockwise[1]
 
-        rotate_big_to_angle(m, big_angle)
-        rotate_small_to_angle(m, small_angle)
+        print(big_angle, small_angle)
+
+        if big_angle != 0:
+            rotate_big_to_angle(m, big_angle)
+        if small_angle != 0:
+            rotate_small_to_angle(m, small_angle)
 
 def rotate_big_to_angle(m, x):
         global catch
@@ -75,7 +84,7 @@ def rotate_big_to_angle(m, x):
             catch['clockwise'] = 1
         else:
             catch['clockwise'] = -1
-            catch['position'] -= CATCH_OFFSET
+            # catch['position'] -= CATCH_OFFSET
         print(catch)
 
 def rotate_small_to_angle(m, x):
@@ -89,13 +98,13 @@ def rotate_small_to_angle(m, x):
 
 def rotate_to_angle(m,x):
         print("Turning to angle:", x)
-        m.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0)
+        m.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
         time.sleep(4)
 
 def rotate_to_rel_angle(m,x):
         print("Turning to rel angle", x)
         print("pos: ", m.position_sp, m.position)
-        m.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0)
+        m.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
         time.sleep(4)
         print("pos: ", m.position_sp, m.position)
         # weird bug: m.position_sp = 225 before a -255 turn, then afterwards m.position_sp = -225
