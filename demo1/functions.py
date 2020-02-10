@@ -31,23 +31,32 @@ def rotate(m, letter):
         global catch, CATCH_OFFSET
         degrees = get_degrees(letter)
         score_clockwise = [
-            (catch['position'] + catch['clockwise'] - m.position_sp) % 360 - catch['clockwise'],
+            (catch['position'] - m.position_sp + catch['clockwise']) % 360 - catch['clockwise'],
             (degrees[0] - catch['position']) % 360,
-            (degrees[0] - degrees[1] - catch['clockwise']) % 360 + catch['clockwise']
+            (degrees[0] - degrees[1]) % 360
         ]
         score_anti_clockwise = [
-            (m.position_sp - catch['position'] - catch['clockwise']) % 360 + catch['clockwise'] - CATCH_OFFSET,
+            (m.position_sp - catch['position'] - catch['clockwise'] - CATCH_OFFSET) % 360 + catch['clockwise'],
             (catch['position'] - degrees[0]) % 360,
-            (degrees[1] - degrees[0] + catch['clockwise']) % 360 - CATCH_OFFSET - catch['clockwise']
+            (degrees[1] - degrees[0] + catch['clockwise'] - CATCH_OFFSET) % 360 - catch['clockwise']
         ]
-        print("(", m.position_sp, "-", catch['position'], "-", catch['clockwise'], ") % 360 + ", catch['clockwise'])
-        print("(", catch['position'], "-", degrees[0], ") % 360 - ", CATCH_OFFSET)
-        print("(", degrees[1], "-", degrees[0], ") % 360 - ", CATCH_OFFSET)
-        print("Final values: ", sum(score_clockwise), sum(score_anti_clockwise))
+        print("\nCLOCKWISE:")
+        print("(", catch['position'], "-", m.position_sp, "+", catch['clockwise'], ") % 360 - ", catch['clockwise'])
+        print("(", degrees[0], "-", catch['position'], ") % 360")
+        print("(", degrees[0], "-", degrees[1], ") % 360")
         print("Clockwise: ", score_clockwise)
+
+        print("\nANTI:")
+        print("(", m.position_sp, "-", catch['position'], "-", catch['clockwise'], "-", CATCH_OFFSET, ") % 360 + ", catch['clockwise'])
+        print("(", catch['position'], "-", degrees[0], ") % 360")
+        print("(", degrees[1], "-", degrees[0], "+", catch['clockwise'], "-", CATCH_OFFSET, ") % 360 - ", catch['clockwise'])
         print("Anti-clockwise: ", score_anti_clockwise)
 
+        print("\nFinal values: ", sum(score_clockwise), sum(score_anti_clockwise), "\n")
+
         if sum(score_clockwise) <= sum(score_anti_clockwise):
+            catch['clockwise'] = 1
+
             small_angle = - score_clockwise[2]
             if(score_clockwise[1] == 0): # big disc already in correct position
                 big_angle = 0
@@ -55,6 +64,8 @@ def rotate(m, letter):
             else:
                 big_angle = score_clockwise[0] + score_clockwise[1]
         else:
+            catch['clockwise'] = -1
+
             small_angle = score_anti_clockwise[2]
             if(score_anti_clockwise[1] == 0): # big disc already in correct position
                 big_angle = 0
@@ -66,7 +77,6 @@ def rotate(m, letter):
 
         if big_angle != 0:
             rotate_big_to_angle(m, big_angle)
-        set_catch(small_angle)
         if small_angle != 0:
             rotate_small_to_angle(m, small_angle)
 
@@ -74,17 +84,10 @@ def rotate_big_to_angle(m, x):
         print("Turning big disc to angle:", x)
 
         rotate_to_rel_angle(m, x)
+
         catch['position'] = m.position_sp
         if x < 0:
             catch['position'] -= CATCH_OFFSET
-
-def set_catch(x):
-    global catch
-    if x > 0:
-        catch['clockwise'] = -1
-    else:
-        catch['clockwise'] = 1
-    print(catch)
 
 def rotate_small_to_angle(m, x):
         print("Turning small disc to angle:", x)
@@ -95,14 +98,14 @@ def rotate_to_angle(m,x):
         print("Turning to angle:", x)
         m.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
         m.wait_while('running')
-        time.sleep(0.2)
+        time.sleep(1)
 
 def rotate_to_rel_angle(m,x):
         print("Turning to rel angle", x)
         print("pos: ", m.position_sp, m.position)
         m.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
         m.wait_while('running')
-        time.sleep(0.2)
+        time.sleep(1)
         print("pos: ", m.position_sp, m.position)
         # weird bug: m.position_sp = 225 before a -255 turn, then afterwards m.position_sp = -225
         # fix it by taking m.position instead of m.position_sp in this assignment:
