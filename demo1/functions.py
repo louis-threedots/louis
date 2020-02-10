@@ -66,7 +66,7 @@ def rotate(m, letter):
 
         if big_angle != 0:
             rotate_big_to_angle(m, big_angle)
-        set_catch(big_angle)
+        set_catch(small_angle)
         if small_angle != 0:
             rotate_small_to_angle(m, small_angle)
 
@@ -80,11 +80,10 @@ def rotate_big_to_angle(m, x):
 
 def set_catch(x):
     global catch
-
-    if x >= 0:
-        catch['clockwise'] = 1
-    else:
+    if x > 0:
         catch['clockwise'] = -1
+    else:
+        catch['clockwise'] = 1
     print(catch)
 
 def rotate_small_to_angle(m, x):
