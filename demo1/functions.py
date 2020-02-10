@@ -74,15 +74,17 @@ def rotate_big_to_angle(m, x):
         print("Turning big disc to angle:", x)
 
         rotate_to_rel_angle(m, x)
+        catch['position'] = m.position_sp
+        if x < 0:
+            catch['position'] -= CATCH_OFFSET
 
 def set_catch(x):
     global catch
-    catch['position'] = m.position_sp
+
     if x >= 0:
         catch['clockwise'] = 1
     else:
         catch['clockwise'] = -1
-        catch['position'] -= CATCH_OFFSET
     print(catch)
 
 def rotate_small_to_angle(m, x):
