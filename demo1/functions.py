@@ -36,8 +36,8 @@ def rotate(m, letter):
             (degrees[0] - degrees[1] - catch['clockwise']) % 360 + catch['clockwise']
         ]
         score_anti_clockwise = [
-            (m.position_sp - catch['position'] - catch['clockwise']) % 360 + catch['clockwise'],
-            (catch['position'] - degrees[0]) % 360 - CATCH_OFFSET,
+            (m.position_sp - catch['position'] - catch['clockwise']) % 360 + catch['clockwise'] - CATCH_OFFSET,
+            (catch['position'] - degrees[0]) % 360,
             (degrees[1] - degrees[0] + catch['clockwise']) % 360 - CATCH_OFFSET - catch['clockwise']
         ]
         print("(", m.position_sp, "-", catch['position'], "-", catch['clockwise'], ") % 360 + ", catch['clockwise'])
@@ -66,46 +66,42 @@ def rotate(m, letter):
 
         if big_angle != 0:
             rotate_big_to_angle(m, big_angle)
+        set_catch(big_angle)
         if small_angle != 0:
             rotate_small_to_angle(m, small_angle)
 
 def rotate_big_to_angle(m, x):
-        global catch
         print("Turning big disc to angle:", x)
-        # if x > m.position_sp:
-        #     angle = x - m.position_sp
-        # else:
-        #     angle = 360 - m.position_sp + x
 
         rotate_to_rel_angle(m, x)
 
-        catch['position'] = m.position_sp
-        if x >= 0:
-            catch['clockwise'] = 1
-        else:
-            catch['clockwise'] = -1
-            # catch['position'] -= CATCH_OFFSET
-        print(catch)
+def set_catch(x):
+    global catch
+    catch['position'] = m.position_sp
+    if x >= 0:
+        catch['clockwise'] = 1
+    else:
+        catch['clockwise'] = -1
+        catch['position'] -= CATCH_OFFSET
+    print(catch)
 
 def rotate_small_to_angle(m, x):
         print("Turning small disc to angle:", x)
-        # if x < m.position_sp:
-        #     angle = x - m.position_sp
-        # else:
-        #     angle = - m.position_sp - x
 
         rotate_to_rel_angle(m, x)
 
 def rotate_to_angle(m,x):
         print("Turning to angle:", x)
         m.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
-        time.sleep(4)
+        m.wait_while('running')
+        time.sleep(0.2)
 
 def rotate_to_rel_angle(m,x):
         print("Turning to rel angle", x)
         print("pos: ", m.position_sp, m.position)
         m.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
-        time.sleep(4)
+        m.wait_while('running')
+        time.sleep(0.2)
         print("pos: ", m.position_sp, m.position)
         # weird bug: m.position_sp = 225 before a -255 turn, then afterwards m.position_sp = -225
         # fix it by taking m.position instead of m.position_sp in this assignment:
@@ -121,6 +117,5 @@ def reset_pins(m):
 
 def get_degrees(letter):
     degrees = characters.character_degrees(letter)
-    # if degrees[1] > degrees[0]:
-    #         degrees[1] -= 360
+
     return degrees
