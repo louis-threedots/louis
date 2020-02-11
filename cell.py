@@ -6,7 +6,7 @@ import characters
 class Cell:
 
     def __init__(self, motorPort, buttonPort):
-            self.catch = {'position': 360, 'clockwise': 1}
+            self.catch = {'position': 360, 'clockwise': 3}
             self.motor = ev3.LargeMotor('out' + str(motorPort))
             self.button = ev3.TouchSensor('in' + str(buttonPort))
             self.CATCH_OFFSET = 20
@@ -40,7 +40,7 @@ class Cell:
             print("\nFinal values: ", sum(score_clockwise.values()), sum(score_anti_clockwise.values()), "\n")
 
             if sum(score_clockwise.values()) <= sum(score_anti_clockwise.values()):
-                self.catch['clockwise'] = 1
+                self.catch['clockwise'] = 3
 
                 small_angle = - score_clockwise['from_big_to_small']
                 if(score_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
@@ -49,7 +49,7 @@ class Cell:
                 else:
                     big_angle = score_clockwise['from_pos_to_catch'] + score_clockwise['from_catch_to_big']
             else:
-                self.catch['clockwise'] = -1
+                self.catch['clockwise'] = -3
 
                 small_angle = score_anti_clockwise['from_big_to_small']
                 if(score_anti_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
@@ -83,14 +83,14 @@ class Cell:
             print("Turning to angle:", x)
             self.motor.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
             self.motor.wait_until('holding')
-            time.sleep(0.2)
+            time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
             print("pos: ", self.motor.position_sp, self.motor.position)
             self.motor.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
             self.motor.wait_until('holding')
-            time.sleep(0.2)
+            time.sleep(0.4)
             print("pos: ", self.motor.position_sp, self.motor.position)
             # weird bug: self.motor.position_sp = 225 before a -255 turn, then afterwards self.motor.position_sp = -225
             # fix it by taking self.motor.position instead of self.motor.position_sp in this assignment:

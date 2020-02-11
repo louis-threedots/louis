@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-import ev3dev.ev3 as ev3
 import characters
 from cell import *
 
