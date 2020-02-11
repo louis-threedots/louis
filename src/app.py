@@ -8,6 +8,7 @@ class App(ABC):
         self.cells = cells
         self.audio = self.audio
         self.name = name
+        self.is_open = True
 
 
     @abstractmethod
@@ -20,7 +21,8 @@ class App(ABC):
         # Actions that an app wants to perform when quitting the app
         pass
 
-
+    def close():
+        self.is_open = false
 
     def load_state(self, state):
         #TODO: Rehydrate app state from local file system
