@@ -9,7 +9,7 @@ if not (c.motor.connected):
         print ('Plug a motor into port B')
 else:
         while True:
-                x = int(input("angle? "))
+                x = float(input("angle? "))
                 c.rotate_to_angle(x)
                 resetstr = input("want to reset?")
                 if resetstr == 'y':
