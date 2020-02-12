@@ -74,7 +74,7 @@ class Cell:
                 self.catch['clockwise'] = 3
 
                 small_angle = - score_clockwise['from_big_to_small']
-                if(score_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
+                if(abs(score_clockwise['from_catch_to_big']) <= 1): # big disc already in correct position
                     big_angle = 0
                     small_angle += score_clockwise['from_pos_to_catch']
                 else:
@@ -83,17 +83,15 @@ class Cell:
                 self.catch['clockwise'] = -3
 
                 small_angle = score_anti_clockwise['from_big_to_small']
-                if(score_anti_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
+                if(abs(score_anti_clockwise['from_catch_to_big']) <= 1): # big disc already in correct position
                     big_angle = 0
                     small_angle -= score_anti_clockwise['from_pos_to_catch']
                 else:
                     big_angle = - score_anti_clockwise['from_pos_to_catch'] - score_anti_clockwise['from_catch_to_big']
 
-            print(big_angle, small_angle)
-
-            if big_angle != 0:
+            if abs(big_angle) > 1:
                 self.rotate_big_to_angle(big_angle)
-            if small_angle != 0:
+            if abs(small_angle) > 1:
                 self.rotate_small_to_angle(small_angle)
 
     def rotate_big_to_angle(self, x):
