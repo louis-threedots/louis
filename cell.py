@@ -6,7 +6,8 @@ import characters
 class Cell:
 
     def __init__(self, motorPort, buttonPort):
-            self.catch = {'position': [0, 180], 'clockwise': 3}
+            self.margin = 3
+            self.catch = {'position': [0, 180], 'clockwise': self.margin}
             self.motor = ev3.LargeMotor('out' + str(motorPort))
             self.button = ev3.TouchSensor('in' + str(buttonPort))
             self.CATCH_OFFSET = 0
@@ -71,7 +72,7 @@ class Cell:
             print("\nFinal values: ", sum(score_clockwise.values()), sum(score_anti_clockwise.values()), "\n")
 
             if sum(score_clockwise.values()) <= sum(score_anti_clockwise.values()):
-                self.catch['clockwise'] = 3
+                self.catch['clockwise'] = self.margin
 
                 small_angle = - score_clockwise['from_big_to_small']
                 if(abs(score_clockwise['from_catch_to_big']) <= 1): # big disc already in correct position
@@ -80,18 +81,18 @@ class Cell:
                 else:
                     big_angle = score_clockwise['from_pos_to_catch'] + score_clockwise['from_catch_to_big']
             else:
-                self.catch['clockwise'] = -3
+                self.catch['clockwise'] = - self.margin
 
                 small_angle = score_anti_clockwise['from_big_to_small']
-                if(abs(score_anti_clockwise['from_catch_to_big']) <= 1): # big disc already in correct position
+                if(abs(score_anti_clockwise['from_catch_to_big']) <= self.margin): # big disc already in correct position
                     big_angle = 0
                     small_angle -= score_anti_clockwise['from_pos_to_catch']
                 else:
                     big_angle = - score_anti_clockwise['from_pos_to_catch'] - score_anti_clockwise['from_catch_to_big']
 
-            if abs(big_angle) > 1:
+            if abs(big_angle) > self.margin:
                 self.rotate_big_to_angle(big_angle)
-            if abs(small_angle) > 1:
+            if abs(small_angle) > self.margin:
                 self.rotate_small_to_angle(small_angle)
 
     def rotate_big_to_angle(self, x):
@@ -111,14 +112,14 @@ class Cell:
 
     def rotate_to_angle(self, x):
             print("Turning to angle:", x)
-            self.motor.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
+            self.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.motor.wait_until('holding')
             time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
             print("pos: ", self.motor.position_sp, self.motor.position)
-            self.motor.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
+            self.motor.run_to_rel_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.motor.wait_until('holding')
             time.sleep(0.4)
             print("pos: ", self.motor.position_sp, self.motor.position)

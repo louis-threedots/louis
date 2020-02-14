@@ -6,7 +6,7 @@ from cell import *
 c = Cell('A', '1')
 
 if not (c.motor.connected):
-        print ('Plug a motor into port B')
+        print ('Plug a motor into port A')
 else:
         while True:
                 x = float(input("angle? "))
