@@ -3,7 +3,7 @@ import speech_recognition as sr
 import hashlib
 import os
 from gtts import gTTS 
-from playsound import playsound
+from pygame import mixer
 
 
 
@@ -17,6 +17,9 @@ class Audio():
         with self.microphone as source:
             self.recognizer.adjust_for_ambient_noise(source)
         self.recognizer.energy_threshold = 900
+        self.cache_dir = "cache"
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
 
 
     def start_background_listening(self, callback):
@@ -26,16 +29,28 @@ class Audio():
     def stop_background_listening(self):
         self.stop_listening
 
+    
 
     def speak(self, text):
         print("speaking")
         hash_object = hashlib.md5(text.encode())
-        filename = "cache/"+hash_object.hexdigest()+".mp3"
+        filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
         if not(os.path.isfile(filename)):
             print(hash_object.hexdigest())
             open_speech = gTTS(text=text, lang="en", slow=False)
             open_speech.save(filename)
-        playsound(filename)
+
+        self.playsound(filename)
+
+
+    def playsound(self, filename):
+        mixer.init()
+        mixer.music.load(filename)
+        mixer.music.play()
+        while mixer.music.get_busy() == True:
+            continue
+
+
 
 
     def recognize_speech(self):
