@@ -59,7 +59,7 @@ characters = {
     'ou': [1, 1, 0, 0, 1, 1]
 }
 
-degrees = {
+degrees_small = {
     '000': 0,
     '001': 45,
     '010': 90,
@@ -70,6 +70,17 @@ degrees = {
     '100': 315,
 }
 
+degrees_big = {
+    '000': [0, 180],
+    '001': [22, 202], # 0.5
+    '010': [45, 225],
+    '101': [67, 247], # 0.5
+    '011': [90, 270],
+    '111': [112, 292], # 0.5
+    '110': [135, 315],
+    '100': [157, 337], # 0.5
+}
+
 def character_degrees(character):
     list_of_pins = characters[character]
     first_three = list_of_pins[:3]
@@ -77,4 +88,4 @@ def character_degrees(character):
     first_three_str = ''.join(str(pin) for pin in first_three)
     second_three_str = ''.join(str(pin) for pin in second_three)
 
-    return [degrees[first_three_str], degrees[second_three_str]]
+    return {'big': degrees_big[first_three_str], 'small': degrees_small[second_three_str]}

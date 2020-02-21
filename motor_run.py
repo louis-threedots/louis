@@ -6,10 +6,10 @@ from cell import *
 c = Cell('A', '1')
 
 if not (c.motor.connected):
-        print ('Plug a motor into port B')
+        print ('Plug a motor into port A')
 else:
         while True:
-                x = int(input("angle? "))
+                x = float(input("angle? "))
                 c.rotate_to_angle(x)
                 resetstr = input("want to reset?")
                 if resetstr == 'y':
