@@ -3,8 +3,8 @@ import time
 start = time.time()
 from cell import *
 
-c = Cell('A', '1')
-c2 = Cell('B', '2')
+c = Cell(1, Arduino())
+c2 = Cell(2, Arduino())
 
 if not (c.motor.connected):
         print ('Plug a motor into port A')
