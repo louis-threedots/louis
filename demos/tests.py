@@ -21,7 +21,7 @@ from cell import *
 # execute
 #   ./[filename]
 
-c = Cell('A', '1')
+c = Cell(1, Arduino())
 
 if not (c.motor.connected):
         print ('Plug a motor into port A')
