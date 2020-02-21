@@ -1,15 +1,17 @@
 #! /usr/bin/python3
 import time
 import characters
+import ev3dev.ev3 as ev3
 
 class Cell:
 
-    def __init__(self, motorPort, buttonPort, arduino):
+    def __init__(self, index, arduino):
             self.margin = 3
             self.catch = {'position': [0, 180], 'clockwise': self.margin}
             self.arduino = arduino
             self.motor_position = 0
-            self.button = ev3.TouchSensor('in' + str(buttonPort))
+            self.index = index
+            self.button = ev3.TouchSensor('in' + str(index))
             self.CATCH_OFFSET = 0
 
     def get_from_pos_to_catch(self, direction):
@@ -27,11 +29,16 @@ class Cell:
         else:
             return self.catch['position'][1], pos[1]
 
+<<<<<<< HEAD
     def print_character(self,c):
         rotate(c)
 
     def rotate(self, letter):   #TODO: Rename to print_character and remove above function
             degrees = self.get_degrees(letter)
+=======
+    def rotate(self, letter):
+            degrees = characters.character_degrees(letter)
+>>>>>>> prepare it to work with arduino
 
             clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
             anti_clockwise_catch_pos, anti_clockwise_from_pos_to_catch = self.get_from_pos_to_catch('anti_clockwise')
@@ -115,26 +122,15 @@ class Cell:
 
     def rotate_to_angle(self, x):
             print("Turning to angle:", x)
-            self.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            self.motor.wait_until('holding')
-            time.sleep(0.4)
+            print("NOT WORKING FOR ARDUINO")
+            # self.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
+            # self.motor.wait_until('holding')
+            # time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
-            print("pos: ", self.motor_position, self.motor_position)
-            self.motor.run_to_rel_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            self.motor.wait_until('holding')
-            time.sleep(0.4)
-            print("pos: ", self.motor_position, self.motor_position)
-            # weird bug: self.motor_position = 225 before a -255 turn, then afterwards self.motor_position = -225
-            # fix it by taking self.motor_position instead of self.motor_position in this assignment:
+            print("pos: ", self.motor_position)
+            self.arduino.run_to_rel_pos(x, self.index)
+            self.motor_position += x
             self.motor_position = self.motor_position % 360
-            print("pos: ", self.motor_position, self.motor_position)
-
-    def run_to_rel_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150):
-
-
-    def get_degrees(self, letter):
-        degrees = characters.character_degrees(letter)
-
-        return degrees
+            print("pos: ", self.motor_position)
