@@ -2,6 +2,7 @@
 import time
 import speech_recognition as sr
 from audio import Audio
+from arduino import *
 import os
 
 
@@ -15,8 +16,8 @@ def main():
     num_cells = arduino.discover()
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
     print("Cell discovery completed."+num_cells+" cells found.")
-    audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.") 
-   
+    audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.")
+
     while (True):
         print("Listening ...")
         response = audio.recognize_speech()

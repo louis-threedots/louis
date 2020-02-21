@@ -122,10 +122,9 @@ class Cell:
 
     def rotate_to_angle(self, x):
             print("Turning to angle:", x)
-            print("NOT WORKING FOR ARDUINO")
-            # self.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            # self.motor.wait_until('holding')
-            # time.sleep(0.4)
+            self.arduino.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
+            self.arduino.motor.wait_until('holding')
+            time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
