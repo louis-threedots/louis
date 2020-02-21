@@ -118,15 +118,15 @@ class Cell:
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
-            print("pos: ", self.motor_position, self.motor.position)
+            print("pos: ", self.motor_position, self.motor_position)
             self.motor.run_to_rel_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.motor.wait_until('holding')
             time.sleep(0.4)
-            print("pos: ", self.motor_position, self.motor.position)
+            print("pos: ", self.motor_position, self.motor_position)
             # weird bug: self.motor_position = 225 before a -255 turn, then afterwards self.motor_position = -225
-            # fix it by taking self.motor.position instead of self.motor_position in this assignment:
-            self.motor_position = self.motor.position % 360
-            print("pos: ", self.motor_position, self.motor.position)
+            # fix it by taking self.motor_position instead of self.motor_position in this assignment:
+            self.motor_position = self.motor_position % 360
+            print("pos: ", self.motor_position, self.motor_position)
 
     def run_to_rel_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150):
 
