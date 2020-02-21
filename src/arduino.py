@@ -18,3 +18,10 @@ class Arduino:
 
 
         return 4 # number of cells
+
+
+    def run_to_rel_pos(self, rel_angle, cell_index):
+        if rel_angle >= 0:
+            self.ser.write(bytearray([cell_index,1,0,0]), 'utf-8')
+        else:
+            self.ser.write(bytearray([cell_index,2,0,0]), 'utf-8')

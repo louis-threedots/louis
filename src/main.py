@@ -9,13 +9,16 @@ import os
 
 
 def main():
-    print("Louis has started. Listening for voice commands ...")
+    print("Louis has started. Running cell discovery ...")
     audio = Audio()
-    #time.sleep(6)
+    arduino = Arduino()
+    num_cells = arduino.discover()
+    cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
+    print("Cell discovery completed."+num_cells+" cells found.")
     audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.") 
    
     while (True):
-        print("Listening")
+        print("Listening ...")
         response = audio.recognize_speech()
         if response["transcription"] is not None:
             before_keyword, keyword, app_name = response["transcription"].partition("open")
