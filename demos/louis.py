@@ -4,6 +4,7 @@ start = time.time()
 from cell import *
 
 c = Cell('A', '1')
+c2 = Cell('B', '2')
 
 if not (c.motor.connected):
         print ('Plug a motor into port A')
@@ -15,6 +16,7 @@ else:
                 while not c.button.is_pressed:
                         pass
                 c.rotate(letter)
+                c2.rotate(letter)
                 print("\n :) !!Printed letter: ", letter,"\n")
 
         end = time.time()
