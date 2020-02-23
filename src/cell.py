@@ -27,7 +27,10 @@ class Cell:
         else:
             return self.catch['position'][1], pos[1]
 
-    def rotate(self, letter):
+    def print_character(self,c):
+        rotate(c)
+
+    def rotate(self, letter):   #TODO: Rename to print_character and remove above function
             degrees = self.get_degrees(letter)
 
             clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
