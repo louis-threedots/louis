@@ -29,10 +29,7 @@ class Cell:
         else:
             return self.catch['position'][1], pos[1]
 
-    def print_character(self,c):
-        rotate(c)
-
-    def rotate(self, letter):   #TODO: Rename to print_character and remove above function
+    def print_character(self, letter):
             degrees = self.get_degrees(letter)
 
             clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
@@ -112,7 +109,6 @@ class Cell:
 
     def rotate_small_to_angle(self, x):
             print("Turning small disc to angle:", x)
-
             self.rotate_to_rel_angle(x)
 
     def rotate_to_angle(self, x):

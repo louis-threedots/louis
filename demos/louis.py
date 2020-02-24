@@ -5,7 +5,6 @@ from cell import *
 from arduino import *
 
 c = Cell(1, Arduino())
-c2 = Cell(2, Arduino())
 
 start_louis = time.time()
 
@@ -13,8 +12,7 @@ for letter in ['l', 'ou', 'i', 's']:
         print('Ready for next letter')
         while not c.button.is_pressed:
                 pass
-        c.rotate(letter)
-        # c2.rotate(letter)
+        c.print_character(letter)
         print("\n :) !!Printed letter: ", letter,"\n")
 
 while not c.button.is_pressed:
