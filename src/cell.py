@@ -29,16 +29,11 @@ class Cell:
         else:
             return self.catch['position'][1], pos[1]
 
-<<<<<<< HEAD
     def print_character(self,c):
         rotate(c)
 
     def rotate(self, letter):   #TODO: Rename to print_character and remove above function
             degrees = self.get_degrees(letter)
-=======
-    def rotate(self, letter):
-            degrees = characters.character_degrees(letter)
->>>>>>> prepare it to work with arduino
 
             clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
             anti_clockwise_catch_pos, anti_clockwise_from_pos_to_catch = self.get_from_pos_to_catch('anti_clockwise')
