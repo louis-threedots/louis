@@ -30,7 +30,7 @@ for letter in "abcdefghijklmnopqrstuvwxyz":
         print('Ready for next letter')
         while not c.button.is_pressed:
                 pass
-        c.rotate(letter)
+        c.print_character(letter)
         print("\n :) !!Printed letter: ", letter, "\n",
             characters.characters[letter], "\n")
 
