@@ -23,7 +23,7 @@ class Learn():
             audio.speak("This is " + c)
             time.sleep(10)
 
-        audio.speak("Now lets learn puctuation characters.")
+        audio.speak("Now lets learn punctuation characters.")
         for p in self.punctuation():
             cell.rotate(p)
             audio.speak("This is " + self.punctuation_pronunciation().get(p))
@@ -37,11 +37,11 @@ class Learn():
 
     def app_instruction(self):
         audio = Audio()
-        audio.speak("Would you like to listen to an instruction for this application?")
+        audio.speak("Would you like to listen to the instruction for this application?")
 
         # take answer from the user
         if audio.recognize_speech()["transcription"] == 'yes':
-            audio.speak("Welcome to Learn. Here you will learn each alphabet.")
+            audio.speak("Welcome to Learn. Here you will learn alphabet in Braille.")
         elif audio.recognize_speech()["transcription"] == 'no':
             audio.speak("skipping instruction")
         elif audio.recognize_speech()["transcription"] != 'yes' and audio.recognize_speech()["transcription"] != 'no':
