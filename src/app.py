@@ -6,7 +6,7 @@ class App(ABC):
 
     def __init__(self, name, cells, audio):
         self.cells = cells
-        self.audio = self.audio
+        self.audio = audio
         self.name = name
         self.is_open = True
 

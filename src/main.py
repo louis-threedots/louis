@@ -2,21 +2,26 @@
 import time
 import speech_recognition as sr
 from audio import Audio
-from arduino import *
+from arduino import Arduino
 import os
-
-
-
+from alphabet import Alphabet
+import asyncio
+from cell import Cell
 
 
 def main():
     print("Louis has started. Running cell discovery ...")
-    audio = Audio()
+    # audio = Audio()
     arduino = Arduino()
-    num_cells = arduino.discover()
+    num_cells = 2 
+    #arduino.discover()
+    print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
-    print("Cell discovery completed."+num_cells+" cells found.")
+    print("Cell discovery completed."+str(num_cells)+" cells found.")
+    audio = Audio()
     audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.")
+    current_app = Alphabet("Alphabet",cells,audio)
+    current_app.on_start()
 
     while (True):
         print("Listening ...")

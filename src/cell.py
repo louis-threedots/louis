@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 import time
 import characters
-import ev3dev.ev3 as ev3
+#import ev3dev.ev3 as ev3
 
 class Cell:
 
@@ -11,7 +11,7 @@ class Cell:
             self.arduino = arduino
             self.motor_position = 0
             self.index = index
-            self.button = ev3.TouchSensor('in' + str(index))
+            # self.button = ev3.TouchSensor('in' + str(index))
             self.CATCH_OFFSET = 0
 
     def get_from_pos_to_catch(self, direction):
@@ -30,7 +30,7 @@ class Cell:
             return self.catch['position'][1], pos[1]
 
     def print_character(self, letter):
-            degrees = self.get_degrees(letter)
+            degrees = characters.character_degrees(letter)
 
             clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
             anti_clockwise_catch_pos, anti_clockwise_from_pos_to_catch = self.get_from_pos_to_catch('anti_clockwise')
