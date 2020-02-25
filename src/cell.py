@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 import time
-import louis.src.characters
+import characters
 #import ev3dev.ev3 as ev3
 
 class Cell:
@@ -96,6 +96,8 @@ class Cell:
                 self.rotate_big_to_angle(big_angle)
             if abs(small_angle) > self.margin:
                 self.rotate_small_to_angle(small_angle)
+
+            return True
 
     def rotate_big_to_angle(self, x):
             print("Turning big disc to angle:", x)

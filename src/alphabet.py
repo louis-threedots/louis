@@ -1,6 +1,6 @@
 import string
 import time
-from louis.src.app import App
+from app import App
 
 
 class Alphabet(App):
@@ -12,9 +12,9 @@ class Alphabet(App):
         self.audio.speak("Lets learn the lowercase alphabet first.")
         for c in string.ascii_lowercase:
             for cell in self.cells:
-                cell.print_character(c)
-            self.audio.speak("This is letter " + c)
-            time.sleep(10)
+                if cell.print_character(c):
+                    self.audio.speak("This is letter " + c)
+                    time.sleep(10)
 
         self.audio.speak("Now lets learn punctuation characters.")
         for p in self.punctuation():

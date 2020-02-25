@@ -1,7 +1,8 @@
-from louis.src.audio import Audio
+from audio import Audio
 import random
 import time
-from louis.src.app import App
+from app import App
+from alphabet import Alphabet
 import string
 
 class Tutor(App):

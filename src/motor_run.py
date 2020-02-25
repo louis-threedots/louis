@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-from louis.src.cell import *
-from louis.src.arduino import *
+from cell import *
+from arduino import *
 
 c = Cell(1, Arduino())
 

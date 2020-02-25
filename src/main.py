@@ -1,18 +1,18 @@
 
 import time
 import speech_recognition as sr
-from louis.src.audio import Audio
-from louis.src.arduino import Arduino
+from audio import Audio
+from arduino import Arduino
 import os
-from louis.src.alphabet import Alphabet
+from alphabet import Alphabet
 import asyncio
-from louis.src.cell import Cell
+from cell import Cell
 
 
 def main():
     print("Louis has started. Running cell discovery ...")
     arduino = Arduino()
-    time.sleep(2) 
+    time.sleep(2)
     num_cells =  arduino.discover()
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
