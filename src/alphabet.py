@@ -12,9 +12,10 @@ class Alphabet(App):
         self.audio.speak("Lets learn the lowercase alphabet first.")
         for c in string.ascii_lowercase:
             for cell in self.cells:
-                if cell.print_character(c):
-                    self.audio.speak("This is letter " + c)
-                    time.sleep(10)
+                cell.print_character(c):
+            time.sleep(3)
+            self.audio.speak("This is letter " + c)
+            time.sleep(5)
 
         self.audio.speak("Now lets learn punctuation characters.")
         for p in self.punctuation():
