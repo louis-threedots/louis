@@ -5,7 +5,7 @@ from app import App
 
 class Alphabet(App):
 
-    def on_start(self): 
+    def on_start(self):
         # instruction when app started, skip when the user says skip
         #self.app_instruction()
 
@@ -29,7 +29,7 @@ class Alphabet(App):
             time.sleep(10)
 
     def app_instruction(self):
-        
+
         self.audio.speak("Would you like to listen to an instruction for this application?")
         answer = self.audio.recognize_speech()["transcription"]
 
@@ -41,8 +41,10 @@ class Alphabet(App):
         else:
             self.audio.speak("Wrong answer. Please respond again.")
 
-   
+
     def on_quit(self):
+        self.cells[0].rotate_to_rel_angle(360 - cells[0].motor_position)
+        self.cells[1].rotate_to_rel_angle(360 - cells[1].motor_position)
         print("Quitting")
 
 
@@ -50,7 +52,7 @@ class Alphabet(App):
         return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
 
     def special_characters(self):
-        return 
+        return
 
     def punctuation_pronunciation(self):
         return {
