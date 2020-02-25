@@ -1,14 +1,12 @@
-from src.audio import Audio
+from louis.src.audio import Audio
 import random
 import time
-from src.app import App
-from src.alphabet import Alphabet
+from louis.src.app import App
 import string
 
 class Tutor(App):
 
     def on_start(self):
-        alphabet = Alphabet()
         # todo: to be implemented shortly
         #self.audio.start_background_listening('stop')
 
@@ -25,7 +23,7 @@ class Tutor(App):
             # initialise variables for each question
             chances = 3
             # display each character
-            self.cell[1].rotate(c)
+            self.cells[1].print_character(c)
             print("cell displaying letter "+c)
             self.audio.speak('What letter is this?')
             while chances > 0:
@@ -42,7 +40,7 @@ class Tutor(App):
                         elif chances == 1:
                             self.audio.speak("Wrong answer. You have "+str(chances)+" more chances to respond.")
                         elif chances == 0:
-                            if c not in alphabet.punctuation():
+                            if c not in self.punctuation():
                                 self.audio.speak("You have used all your chances to answer. The correct answer is " + c)
                             else:
                                 self.audio.speak("You have used all your chances to answer. The correct answer is " + learn.punctuation_pronunciation().get(c))
@@ -73,39 +71,61 @@ class Tutor(App):
 
     def test_done_instruction(self, bad_pile, score):
 
-        alphabet = Alphabet()
         self.audio.speak("Testing is done. You got" + round(score * 100 / len(self.characters_shuffled()), 1) + " percent right. Would you like to go through letters you got wrong?")
         if self.audio.recognize_speech()["transcription"] == "yes":
             self.audio.speak("Okay, lets go through the characters you answered wrong.")
             while self.audio.recognize_speech()["transcription"] != "stop application":
                 for c in bad_pile:
-                    if c not in alphabet.punctuation():
-                        self.cell.rotate(c)
+                    if c not in self.punctuation():
+                        self.cells[1].print_character(c)
                         print("cell displaying letter " + c)
                         self.audio.speak("This is " + c)
                         time.sleep(10)
                     else:
-                        self.cell.rotate(c)
+                        self.cells[1].print_character(c)
                         print("cell displaying letter " + c)
-                        self.audio.speak("This is "+alphabet.punctuation_pronunciation().get(c))
+                        self.audio.speak("This is "+self.punctuation_pronunciation().get(c))
                         time.sleep(10)
 
         elif self.audio.recognize_speech()["transcription"] == "no":
             self.audio.speak("Would you like to exit tutor?")
             if self.audio.recognize_speech()["transcription"] == "yes":
-                self.exit_tutor()
+                self.on_quit()
             elif self.audio.recognize_speech()["transcription"] == "no":
                 self.audio.speak("do you want to take a test again?")
                 if self.audio.recognize_speech()["transcription"] == "yes":
-                    self.play_tutor()
+                    self.on_quit()
                 elif self.audio.recognize_speech()["transcription"] == "no":
-                    self.exit_tutor()
+                    self.on_quit()
 
     def on_quit(self):
         self.audio.speak("Turning off tutor")
 
     def characters_shuffled(self):
-        alphabet = Alphabet()
-        chars = string.ascii_lowercase + alphabet.punctuation() + ['CAPITAL', 'LETTER', 'NUMBER', 'ou']
+        chars = string.ascii_lowercase + self.punctuation() + ['CAPITAL', 'LETTER', 'NUMBER', 'ou']
         chars_shuffled = random.sample(chars, len(chars))
         return chars_shuffled
+
+    def punctuation(self):
+        return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
+
+    def punctuation_pronunciation(self):
+        return {
+            '.': "dot",
+            ',': "comma",
+            ';': "semi colon",
+            ':': "colon",
+            '/': "slash",
+            '?': "question mark",
+            '!': "exclamation mark",
+            '@': "at symbol",
+            '#': "hash",
+            '+': "plus symbol",
+            '-': "minus symbol",
+            '*': "asterisk",
+            '<': "less than",
+            '>': "greater than",
+            '(': "left parentheses",
+            ')': "right parentheses",
+            ' ': "blank space"
+        }

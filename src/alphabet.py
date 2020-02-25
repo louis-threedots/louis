@@ -1,6 +1,6 @@
 import string
 import time
-from app import App
+from louis.src.app import App
 
 
 class Alphabet(App):
