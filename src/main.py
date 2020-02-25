@@ -1,12 +1,12 @@
 
 import time
 import speech_recognition as sr
-from audio import Audio
-from arduino import Arduino
+from louis.src.audio import Audio
+from louis.src.arduino import Arduino
 import os
-from alphabet import Alphabet
+from louis.src.alphabet import Alphabet
 import asyncio
-from cell import Cell
+from louis.src.cell import Cell
 
 
 def main():
