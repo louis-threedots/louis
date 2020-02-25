@@ -7,14 +7,14 @@ class Alphabet(App):
 
     def on_start(self): 
         # instruction when app started, skip when the user says skip
-        #self.app_instruction()
+        self.app_instruction()
 
         self.audio.speak("Lets learn the lowercase alphabet first.")
         for c in string.ascii_lowercase:
-            self.cells[0].print_character(c)
-            self.cells[1].print_character(c)
+            for cell in self.cells:
+                cell.print_character(c)
             self.audio.speak("This is letter " + c)
-            time.sleep(5)
+            time.sleep(10)
 
         self.audio.speak("Now lets learn punctuation characters.")
         for p in self.punctuation():

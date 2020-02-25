@@ -89,10 +89,12 @@ class Audio():
             
         except sr.RequestError:
             # API was unreachable or unresponsive
+            print("API unavailable")
             response["success"] = False
             response["error"] = "API unavailable"
         except sr.UnknownValueError:
             # Speech was unintelligible
+            print("Speech unintelligible")
             response["error"] = "Unable to recognize speech"
 
         return response

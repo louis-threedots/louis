@@ -11,10 +11,9 @@ from cell import Cell
 
 def main():
     print("Louis has started. Running cell discovery ...")
-    # audio = Audio()
     arduino = Arduino()
-    num_cells = 2 
-    #arduino.discover()
+    time.sleep(2) 
+    num_cells =  arduino.discover()
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
     print("Cell discovery completed."+str(num_cells)+" cells found.")
@@ -33,5 +32,4 @@ def main():
                 audio.speak("Opening the application"+app_name)
 
 
-if __name__ == "__main__":
-    main()
+main()
