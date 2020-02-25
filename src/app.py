@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import speech_recognition as sr
 
-# Abstract class that defines the methods amd attributes of Braille Apps. 
+# Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
 
     def __init__(self, name, cells, audio):
@@ -16,10 +16,11 @@ class App(ABC):
         # Actions that an app wants to perform on app start
         pass
 
-    @abstractmethod
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
-        pass
+        for cell in cells:
+            self.cell.rotate_to_rel_angle(360 - cell.motor_position)
+        print("Quitting")
 
     def close():
         self.is_open = false
@@ -28,7 +29,20 @@ class App(ABC):
         #TODO: Rehydrate app state from local file system
         pass
 
-    
     def save_state(self, state):
         #TODO: Save app state to local file system
         pass
+
+    def app_instruction(self, instruction):
+
+        self.audio.speak("Would you like to listen to an instruction for this application?")
+        answer = self.audio.recognize_speech()["transcription"]
+
+        # take answer from the user
+        if answer.find('yes') != -1:
+            self.audio.speak("Welcome to " + self.name + ". " + instruction)
+        elif answer.find('no') != -1:
+            self.audio.speak("skipping instruction")
+        else:
+            self.audio.speak("I did not understand.")
+            self.app_instruction(instruction) # ask the question again

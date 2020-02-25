@@ -1,77 +1,47 @@
 import string
 import time
 from app import App
-
+from characters import pronunciation
 
 class Alphabet(App):
 
     def on_start(self):
         # instruction when app started, skip when the user says skip
-        self.app_instruction()
+        self.app_instruction("Here you will learn the alphabet. You can move on to the next character by saying next.")
 
         self.audio.speak("Lets learn the lowercase alphabet first.")
         for c in string.ascii_lowercase:
-            for cell in self.cells:
-                cell.print_character(c):
-            time.sleep(3)
-            self.audio.speak("This is letter " + c)
-            time.sleep(5)
+            for cell in reversed(self.cells):
+                cell.print_character(c)
+            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            self.audio.speak("This is the letter " + pronunciation[c])
+            self.wait_for("next")
 
         self.audio.speak("Now lets learn punctuation characters.")
         for p in self.punctuation():
-            self.cells[1].print_character(c)
-            self.audio.speak("This is " + self.punctuation_pronunciation().get(p))
-            time.sleep(10)
+            for cell in reversed(self.cells):
+                cell.print_character(p)
+            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            self.audio.speak("This is a " + pronunciation[p])
+            self.wait_for("next")
 
-        self.audio.speak("Now lets learn special charaters.")
-        for s in ['CAPITAL', 'LETTER', 'NUMBER', 'ou']:
-            self.cells[1].print_character(c)
-            self.audio.speak("This represents " + s)
-            time.sleep(10)
+        self.audio.speak("Now lets learn special characters.")
+        for s in ['CAPITAL', 'LETTER', 'NUMBER']:
+            for cell in reversed(self.cells):
+                cell.print_character(s)
+            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            self.audio.speak("This announces a " + s)
+            self.wait_for("next")
 
-    def app_instruction(self):
-
-        self.audio.speak("Would you like to listen to an instruction for this application?")
-        answer = self.audio.recognize_speech()["transcription"]
-
-        # take answer from the user
-        if answer == 'yes':
-            self.audio.speak("Welcome to Learn. Here you will learn the alphabet.")
-        elif answer == 'no':
-            self.audio.speak("skipping instruction")
-        else:
-            self.audio.speak("Wrong answer. Please respond again.")
-
-
-    def on_quit(self):
-        self.cells[0].rotate_to_rel_angle(360 - cells[0].motor_position)
-        self.cells[1].rotate_to_rel_angle(360 - cells[1].motor_position)
-        print("Quitting")
-
+    def wait_for(self, word):
+        word_pos = -1
+        while (word_pos == -1):
+            print("Listening ...")
+            word_listener = self.audio.recognize_speech()["transcription"]
+            word_pos = word_listener.find(word)
 
     def punctuation(self):
         return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
 
     def special_characters(self):
         return
-
-    def punctuation_pronunciation(self):
-        return {
-            '.': "dot",
-            ',': "comma",
-            ';': "semi colon",
-            ':': "colon",
-            '/': "slash",
-            '?': "question mark",
-            '!': "exclamation mark",
-            '@': "at symbol",
-            '#': "hash",
-            '+': "plus symbol",
-            '-': "minus symbol",
-            '*': "asterisk",
-            '<': "less than",
-            '>': "greater than",
-            '(': "left parentheses",
-            ')': "right parentheses",
-            ' ': "blank space"
-        }
