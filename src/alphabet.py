@@ -13,7 +13,7 @@ class Alphabet(App):
         for c in string.ascii_lowercase:
             for cell in reversed(self.cells):
                 cell.print_character(c)
-            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            time.sleep(2) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
             self.audio.speak("This is the letter " + pronunciation[c])
             self.wait_for("next")
 
@@ -21,7 +21,7 @@ class Alphabet(App):
         for p in self.punctuation():
             for cell in reversed(self.cells):
                 cell.print_character(p)
-            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            time.sleep(2) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
             self.audio.speak("This is a " + pronunciation[p])
             self.wait_for("next")
 
@@ -29,7 +29,7 @@ class Alphabet(App):
         for s in ['CAPITAL', 'LETTER', 'NUMBER']:
             for cell in reversed(self.cells):
                 cell.print_character(s)
-            time.sleep(3) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
+            time.sleep(2) # TODO: Arduino needs to send a message to the PC to tell it when a move has completed
             self.audio.speak("This announces a " + s)
             self.wait_for("next")
 
@@ -39,6 +39,8 @@ class Alphabet(App):
             print("Listening ...")
             word_listener = self.audio.recognize_speech()["transcription"]
             word_pos = word_listener.find(word)
+            if word_listener.find('quit') != -1 or word_listener.find('exit') != -1:
+                self.confirm_quit()
 
     def punctuation(self):
         return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']

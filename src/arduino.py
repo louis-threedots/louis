@@ -8,14 +8,14 @@ class Arduino:
     def __init__(self):
         self.ser = serial.Serial('/dev/ttyACM0',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
         #self.motor = ev3.LargeMotor('outA')
-        #discover()
+        # self.discover()
 
     def discover(self):
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )
         self.ser.write(b'acaa')
-        #time.sleep(5.0) 
+        #time.sleep(5.0)
         ack=self.ser.read(4) #TODO: Check ack
         discovery_result = self.ser.read(4)
         print(discovery_result)
