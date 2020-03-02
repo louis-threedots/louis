@@ -59,19 +59,19 @@ class Cell:
                 'from_big_to_small': anti_clockwise_from_big_to_small_degree
             }
 
-            print("\nCLOCKWISE:")
+            # print("\nCLOCKWISE:")
             # print("(", self.catch['position'], "-", self.motor_position, "+", self.catch['clockwise'], ") % 360 - ", self.catch['clockwise'])
             # print("(", degrees['big'], "-", self.catch['position'], ") % 360")
             # print("(", degrees['big'], "-", degrees['small'], ") % 360")
-            print("Clockwise: ", score_clockwise)
+            # print("Clockwise: ", score_clockwise)
 
-            print("\nANTI:")
+            # print("\nANTI:")
             # print("(", self.motor_position, "-", self.catch['position'], "-", self.catch['clockwise'], "-", self.CATCH_OFFSET, ") % 360 + ", self.catch['clockwise'])
             # print("(", self.catch['position'], "-", degrees['big'], ") % 360")
             # print("(", degrees['small'], "-", degrees['big'], "+", self.catch['clockwise'], "-", self.CATCH_OFFSET, ") % 360 - ", self.catch['clockwise'])
-            print("Anti-clockwise: ", score_anti_clockwise)
+            # print("Anti-clockwise: ", score_anti_clockwise)
 
-            print("\nFinal values: ", sum(score_clockwise.values()), sum(score_anti_clockwise.values()), "\n")
+            # print("\nFinal values: ", sum(score_clockwise.values()), sum(score_anti_clockwise.values()), "\n")
 
             if sum(score_clockwise.values()) <= sum(score_anti_clockwise.values()):
                 self.catch['clockwise'] = self.margin
@@ -121,8 +121,8 @@ class Cell:
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
-            print("pos: ", self.motor_position)
+            # print("pos: ", self.motor_position)
             self.arduino.run_to_rel_pos(x, self.index)
             self.motor_position += x
             self.motor_position = self.motor_position % 360
-            print("pos: ", self.motor_position)
+            # print("pos: ", self.motor_position)
