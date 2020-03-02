@@ -38,8 +38,8 @@ class App(ABC):
             self.audio.speak("I did not understand.")
             self.confirm_quit() # ask the question again
 
-    def close():
-        self.is_open = false
+    def close(self):
+        self.is_open = False
 
     def load_state(self, state):
         #TODO: Rehydrate app state from local file system
