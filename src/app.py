@@ -64,7 +64,7 @@ class App(ABC):
             self.app_instruction(instruction) # ask the question again
 
     
-    def get_pressed_button(self)
+    def get_pressed_button(self):
         # Returns the index of the pressed cell button
         return self.arduino.get_pressed_button()
 

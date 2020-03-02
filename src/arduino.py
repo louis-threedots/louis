@@ -52,6 +52,6 @@ class Arduino:
         #TODO: Add timeout
         self.ser.write(bytearray([self.cell_offset+cell_index,106,0,0]))
         pong = self.ser.read(4)
-        while pong[1] != 107 && pong[0] != self.cell_offset+cell_index:
+        while pong[1] != 107 and pong[0] != self.cell_offset+cell_index:
             pong = self.ser.read(4)
         return True
