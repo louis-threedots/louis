@@ -43,7 +43,7 @@ class Arduino:
         #TODO: Add timeout
         self.ser.read(self.ser.inWaiting())
         button_message = self.ser.read(4)
-        while button_message[1]!= 105
+        while button_message[1]!= 105:
             button_message = self.ser.read(4)
         return button_message[3] - self.cell_offset
 
