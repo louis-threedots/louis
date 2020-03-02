@@ -5,9 +5,8 @@ import os
 from gtts import gTTS
 from pygame import mixer
 
-
-
-
+input_speech = False
+output_audio = False
 
 class Audio():
 
@@ -31,14 +30,17 @@ class Audio():
 
     def speak(self, text):
         print("speaking")
-        hash_object = hashlib.md5(text.encode())
-        filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
-        if not(os.path.isfile(filename)):
-            print(hash_object.hexdigest())
-            open_speech = gTTS(text=text, lang="en", slow=False)
-            open_speech.save(filename)
+        if output_audio:
+            hash_object = hashlib.md5(text.encode())
+            filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
+            if not(os.path.isfile(filename)):
+                print(hash_object.hexdigest())
+                open_speech = gTTS(text=text, lang="en", slow=False)
+                open_speech.save(filename)
 
-        self.playsound(filename)
+            self.playsound(filename)
+        else:
+            print(text)
 
 
     def playsound(self, filename):
@@ -62,11 +64,6 @@ class Audio():
                 otherwise a string containing the transcribed text
         """
 
-        # adjust the recognizer sensitivity to ambient noise and record audio
-        # from the microphone
-        with self.microphone as source:
-            speech = self.recognizer.listen(source, phrase_time_limit=4)
-
         # set up the response object
         response = {
             "success": True,
@@ -74,27 +71,29 @@ class Audio():
             "transcription": "",
         }
 
-        try:
-            # text = self.recognizer.recognize_google(speech, language = 'en-IN', show_all = True )
-            print("I think you said '" + self.recognizer.recognize_google(speech) + "'")
-        except:
-            print("!!!!!!!!!")
+        if input_speech:
+            # adjust the recognizer sensitivity to ambient noise and record audio
+            # from the microphone
+            with self.microphone as source:
+                speech = self.recognizer.listen(source, phrase_time_limit=4)
 
-        # try recognizing the speech in the recording
-        # if a RequestError or UnknownValueError exception is caught,
-        #     update the response object accordingly
-        try:
-            print("Processing speech...")
-            response["transcription"] = self.recognizer.recognize_google(speech)
-            print("You said: " + response["transcription"])
-        except sr.RequestError:
-            # API was unreachable or unresponsive
-            print("API unavailable")
-            response["success"] = False
-            response["error"] = "API unavailable"
-        except sr.UnknownValueError:
-            # Speech was unintelligible
-            print("Speech unintelligible")
-            response["error"] = "Unable to recognize speech"
+            # try recognizing the speech in the recording
+            # if a RequestError or UnknownValueError exception is caught,
+            #     update the response object accordingly
+            try:
+                print("Processing speech...")
+                response["transcription"] = self.recognizer.recognize_google(speech)
+                print("You said: " + response["transcription"])
+            except sr.RequestError:
+                # API was unreachable or unresponsive
+                print("API unavailable")
+                response["success"] = False
+                response["error"] = "API unavailable"
+            except sr.UnknownValueError:
+                # Speech was unintelligible
+                print("Speech unintelligible")
+                response["error"] = "Unable to recognize speech"
+        else:
+            response["transcription"] = str(input("speech? "))
 
         return response

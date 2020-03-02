@@ -33,6 +33,9 @@ class Alphabet(App):
             self.audio.speak("This announces a " + s)
             self.wait_for("next")
 
+        self.audio.speak("That were all the characters. The app will now close itself.")
+        self.on_quit()
+
     def wait_for(self, word):
         word_pos = -1
         while (word_pos == -1):

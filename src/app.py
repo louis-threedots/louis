@@ -19,9 +19,10 @@ class App(ABC):
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
         self.audio.speak("Goodbye.")
-        for cell in self.cells:
-            cell.rotate_to_rel_angle(360 - cell.motor_position)
+        for cell in reversed(self.cells):
+            cell.rotate_to_rel_angle(720 - cell.motor_position)
         print("Quitting")
+        self.close()
 
     def confirm_quit(self):
 
