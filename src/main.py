@@ -27,9 +27,9 @@ def main():
         response = audio.recognize_speech()
         if response["transcription"] != "":
             before_keyword, keyword, app_name = response["transcription"].partition("open")
-            open_app(app_name, cells, audio)
+            open_app(app_name, cells, audio, arduino)
 
-def open_app(app_name, cells, audio):
+def open_app(app_name, cells, audio, arduino):
     current_app = None
 
     app_name = app_name.replace(" ","")
@@ -38,9 +38,9 @@ def open_app(app_name, cells, audio):
 
     print(app_name)
     if app_name == 'learn':
-        current_app = Alphabet("Learn",cells,audio)
+        current_app = Alphabet("Learn",cells,audio,arduino)
     elif app_name == 'tutor':
-        current_app = Tutor("Tutor",cells,audio)
+        current_app = Tutor("Tutor",cells,audio,arduino)
 
     if current_app is not None:
         audio.speak("Opening the application " + app_name)

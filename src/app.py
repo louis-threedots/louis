@@ -4,9 +4,10 @@ import speech_recognition as sr
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
 
-    def __init__(self, name, cells, audio):
+    def __init__(self, name, cells, audio, arduino):
         self.cells = cells
         self.audio = audio
+        self.arduino = arduino
         self.name = name
         self.is_open = True
 
@@ -61,3 +62,12 @@ class App(ABC):
         else:
             self.audio.speak("I did not understand.")
             self.app_instruction(instruction) # ask the question again
+
+    
+    def get_pressed_button(self)
+        # Returns the index of the pressed cell button
+        return self.arduino.get_pressed_button()
+
+    def is_cell_finished(self, index):
+        # Returns true if all the cells have finished rendering
+        return self.arduino.ping(index)
