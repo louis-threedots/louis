@@ -20,9 +20,10 @@ class App(ABC):
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
         self.audio.speak("Goodbye.")
-        for cell in self.cells:
-            cell.rotate_to_rel_angle(360 - cell.motor_position)
+        for cell in reversed(self.cells):
+            cell.rotate_to_rel_angle(720 - cell.motor_position)
         print("Quitting")
+        self.close()
 
     def confirm_quit(self):
 
@@ -38,8 +39,8 @@ class App(ABC):
             self.audio.speak("I did not understand.")
             self.confirm_quit() # ask the question again
 
-    def close():
-        self.is_open = false
+    def close(self):
+        self.is_open = False
 
     def load_state(self, state):
         #TODO: Rehydrate app state from local file system

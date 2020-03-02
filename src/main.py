@@ -18,7 +18,7 @@ def main():
     num_cells =  arduino.discover()
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
-    print("Cell discovery completed."+str(num_cells)+" cells found.")
+    print("Cell discovery completed. "+str(num_cells)+" cells found.")
     audio = Audio()
     audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.")
 
