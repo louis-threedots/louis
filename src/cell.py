@@ -126,3 +126,9 @@ class Cell:
             self.motor_position += x
             self.motor_position = self.motor_position % 360
             # print("pos: ", self.motor_position)
+    
+    def wait_for_button_press(self):
+        if self.arduino.get_pressed_button() != self.index:
+            self.wait_for_button_press()
+        return True
+        #Todo return False after timeout
