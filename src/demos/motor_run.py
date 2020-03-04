@@ -9,9 +9,7 @@ time.sleep(2)
 num_cells = arduino.discover()
 cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
 
-x = 22.5
 while True:
-    print('Ready for next angle')
-    cells[0].arduino.get_pressed_button()
-    for cell in reversed(cells):
+    for idx, cell in enumerate(cells):
+        x = int(input("angle c" + str(idx+1) + "? "))
         cell.rotate_to_rel_angle(x)

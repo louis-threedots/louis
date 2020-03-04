@@ -15,7 +15,7 @@ def main():
     print("Louis has started. Running cell discovery ...")
     arduino = Arduino()
     time.sleep(2)
-    num_cells =  arduino.discover()
+    num_cells = arduino.discover()
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
     print("Cell discovery completed. "+str(num_cells)+" cells found.")
