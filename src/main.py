@@ -1,4 +1,4 @@
-
+#! /usr/bin/python3
 import time
 import speech_recognition as sr
 from audio import Audio

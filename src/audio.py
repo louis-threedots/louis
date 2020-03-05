@@ -11,10 +11,11 @@ output_audio = False
 class Audio():
 
     def __init__(self):
-        self.recognizer =  sr.Recognizer()
-        self.microphone = sr.Microphone() # Set appropriate device index, e.g `device_index=3`
-        with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source)
+        if input_speech:
+            self.recognizer =  sr.Recognizer()
+            self.microphone = sr.Microphone() # Set appropriate device index, e.g `device_index=3`
+            with self.microphone as source:
+                self.recognizer.adjust_for_ambient_noise(source)
         # self.recognizer.energy_threshold = 900
         self.cache_dir = "cache"
         if not os.path.exists(self.cache_dir):

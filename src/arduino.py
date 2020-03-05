@@ -2,7 +2,7 @@ import serial
 import time
 import ev3dev.ev3 as ev3
 
-main_cell = 'pi'
+main_cell = 'ev3'
 
 class Arduino:
 
