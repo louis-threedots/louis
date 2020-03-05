@@ -31,7 +31,7 @@ start_tests = time.time()
 
 for letter in "abcdefghijklmnopqrstuvwxyz":
         print('Ready for next letter')
-        cells[0].arduino.get_pressed_button()
+        cells[0].wait_for_button_press()
         for cell in reversed(cells):
             cell.print_character(letter)
         print("\n :) !!Printed letter: ", letter, "\n",
