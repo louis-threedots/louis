@@ -11,7 +11,7 @@ from arduino import *
 #2
 # to copy files from directory over to EV3
 # execute with EV3's IP-address between '@' and ':'
-#   scp src/arduino.py src/cell.py src/characters.py src/demos/__init__.py src/demos/angles_test.py src/demos/louis.py src/demos/motor_run.py src/demos/test_all_characters.py robot@192.168.105.1:/home/robot
+#   scp arduino.py cell.py characters.py demo_angles_test.py demo_louis.py demo_motor_run.py demo_test_all_characters.py robot@192.168.105.1:/home/robot
 # enter 'maker' as pw
 #3
 # to connect to EV3
