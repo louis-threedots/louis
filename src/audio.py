@@ -6,7 +6,7 @@ from gtts import gTTS
 from pygame import mixer
 
 input_speech = False
-output_audio = False
+output_audio = True
 
 class Audio():
 
