@@ -1,12 +1,15 @@
 import time
-import speech_recognition as sr
 import hashlib
 import os
-from gtts import gTTS
-from pygame import mixer
+try:
+    import speech_recognition as sr
+    from gtts import gTTS
+    from pygame import mixer
+except:
+    print('no sr')
 
 input_speech = False
-output_audio = True
+output_audio = False
 
 class Audio():
 

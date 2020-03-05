@@ -1,6 +1,9 @@
 #! /usr/bin/python3
 import time
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+except:
+    print('no sr')
 from audio import Audio
 from arduino import Arduino
 import os
