@@ -12,7 +12,9 @@ class Tutor(App):
         #self.audio.start_background_listening('stop')
 
         # instruction when app started, skip when user says skip
-        self.app_instruction("The purpose of this application is to test how much you have learnt from Learn. Let's start testing.")
+        self.app_instruction("The purpose of this application is to test how much you have learnt from Learn. Let's start testing."
+                             "You can answer the question with any word of your choice that starts with a letter you believe to be the correct answer,"
+                             "but avoid using quit or exit unless you want to quit the application.")
 
         # initialise good_pile and bad_pile
         good_pile = []
@@ -25,7 +27,17 @@ class Tutor(App):
             # display each character
             self.cells[1].print_character(c)
             print("cell displaying letter "+c)
-            self.audio.speak('What letter is this?') # TODO: announce when it's not an alphabet character
+
+            #give instruction: digit/punctuation/special indicator/alphabet
+            if c in self.digit():
+                self.audio.speak('What letter is this? This is a digit.')
+            elif c in self.punctuation():
+                self.audio.speak("What letter is this? This is a punctuation character.")
+            elif c in self.special_indicators():
+                self.audio.speak("What letter is this? This is a special indicator.")
+            else:
+                self.audio.speak("What letter is this? This is an alphabet character.")
+
             while chances > 0:
                 answer = self.audio.recognize_speech()["transcription"]
                 if answer == '': # speech recognizer returned error
@@ -33,10 +45,21 @@ class Tutor(App):
                     continue
 
                 answer = answer.lower()
+
+                #go back to main app when heard quit/exit
+                if answer == 'quit' or answer == 'exit':
+                    self.audio.speak("Would you like to quit tutor app?")
+                    answer_2 = self.audio.recognize_speech()['transcription'].lower()
+                    if answer_2 == 'yes':
+                        break
+                    elif answer_2 == 'no':
+                        continue
+
                 if len(c) == 1:
                     # cut down length of input word to one character
                     # to allow 'Apple' for 'A' etc.
-                    answer = answer[0]
+                    if c not in special_indicators and answer not in special_indicators:
+                        answer = answer[0]
 
                 if answer == c:
                     self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
@@ -86,9 +109,15 @@ class Tutor(App):
                     self.on_quit()
 
     def characters_shuffled(self):
-        chars = list(string.ascii_lowercase) + self.punctuation() + ['CAPITAL', 'LETTER', 'NUMBER']
+        chars = list(string.ascii_lowercase) + self.punctuation() + ['CAPITAL', 'LETTER', 'NUMBER'] + self.digit()
         chars_shuffled = random.sample(chars, len(chars))
         return chars_shuffled
 
     def punctuation(self):
         return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
+
+    def digit(self):
+        return ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+    def special_indicators(self):
+        return ["capital", "letter", "number"]
