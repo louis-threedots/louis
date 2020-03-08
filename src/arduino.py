@@ -51,6 +51,7 @@ class Arduino:
         if main_cell == 'ev3':
             while not self.button.is_pressed:
                 pass
+            return 1
         else:
             #TODO: Add timeout
             self.ser.read(self.ser.inWaiting())
