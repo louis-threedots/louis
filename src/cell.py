@@ -36,6 +36,9 @@ class Cell:
                     clockwise_degrees_big = degree_big
                     clockwise_from_big_to_small_degree = (degree_big - degree_small) % 360
                     if clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
+                        print('clockwise')
+                        print('from_catch_to_big: (', str(clockwise_degrees_big), '-', str(clockwise_catch_pos), ') % 360 = ', str((clockwise_degrees_big - clockwise_catch_pos) % 360))
+                        print('from_big_to_small: ', str(clockwise_from_big_to_small_degree))
                         scores_clockwise.append(
                             {
                                 'from_catch_to_big': (clockwise_degrees_big - clockwise_catch_pos) % 360,
@@ -46,12 +49,23 @@ class Cell:
                     anti_clockwise_degrees_big = degree_big
                     anti_clockwise_from_big_to_small_degree = (degree_small - degree_big) % 360
                     if anti_clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
+                        print('anticlockwise')
+                        print('from_catch_to_big: (', str(anti_clockwise_catch_pos), '-', str(anti_clockwise_degrees_big), ') % 360 = ', str((anti_clockwise_catch_pos - anti_clockwise_degrees_big) % 360))
+                        print('from_big_to_small: ', str(anti_clockwise_from_big_to_small_degree))
                         scores_anti_clockwise.append(
                             {
                                 'from_catch_to_big': (anti_clockwise_catch_pos - anti_clockwise_degrees_big) % 360,
                                 'from_big_to_small': anti_clockwise_from_big_to_small_degree
                             }
                         )
+
+            print('')
+            print(self.motor_position)
+            print('clockwise_from_pos_to_catch: ', str(clockwise_from_pos_to_catch))
+            print(scores_clockwise)
+            print('anti_clockwise_from_pos_to_catch: ', str(anti_clockwise_from_pos_to_catch))
+            print(scores_anti_clockwise)
+            print('')
 
             idx_min_score_clockwise = scores_clockwise.index(min(scores_clockwise, key=lambda x: sum(x.values())))
             score_clockwise = scores_clockwise[idx_min_score_clockwise]
