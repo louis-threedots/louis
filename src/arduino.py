@@ -39,8 +39,9 @@ class Arduino:
     def run_to_rel_pos(self, rel_angle, cell_index):
         if main_cell == 'ev3':
             self.motor.run_to_rel_pos(position_sp = rel_angle, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            self.motor.wait_until('holding')
-            time.sleep(0.4)
+            if abs(rel_angle) >= 10:
+                self.motor.wait_until('holding')
+            time.sleep(0.5)
         else:
             if rel_angle >= 0:
                 self.ser.write(bytearray([self.cell_offset+cell_index,102]+self.convert_to_base(rel_angle)))
