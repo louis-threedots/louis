@@ -1,6 +1,9 @@
-
+#! /usr/bin/python3
 import time
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+except:
+    print('no speech recognition import')
 from audio import Audio
 from arduino import Arduino
 import os
@@ -15,7 +18,7 @@ def main():
     print("Louis has started. Running cell discovery ...")
     arduino = Arduino()
     time.sleep(2)
-    num_cells =  arduino.discover()
+    num_cells = arduino.discover()
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
     print("Cell discovery completed. "+str(num_cells)+" cells found.")

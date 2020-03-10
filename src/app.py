@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+except:
+    print('no speech recognition import')
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -64,7 +67,7 @@ class App(ABC):
             self.audio.speak("I did not understand.")
             self.app_instruction(instruction) # ask the question again
 
-    
+
     def get_pressed_button(self):
         # Returns the index of the pressed cell button
         return self.arduino.get_pressed_button()

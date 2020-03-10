@@ -4,20 +4,18 @@ start = time.time()
 from cell import *
 from arduino import *
 
-c = Cell(1, Arduino())
+arduino = Arduino()
+time.sleep(2)
+num_cells = arduino.discover()
+cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
 
 start_louis = time.time()
 
 for letter in ['l', 'ou', 'i', 's']:
         print('Ready for next letter')
-        while not c.button.is_pressed:
-                pass
-        c.print_character(letter)
-        print("\n :) !!Printed letter: ", letter,"\n")
-
-while not c.button.is_pressed:
-        pass
-c.rotate_to_rel_angle(360 - c.motor_position)
+        cells[0].wait_for_button_press()
+        for cell in reversed(cells):
+            cell.print_character(letter)
 
 end = time.time()
 print("\nTime program:" + str(end - start_louis))

@@ -1,9 +1,12 @@
 import time
-import speech_recognition as sr
 import hashlib
 import os
-from gtts import gTTS
-from pygame import mixer
+try:
+    import speech_recognition as sr
+    from gtts import gTTS
+    from pygame import mixer
+except:
+    print('no speech recognition import')
 
 input_speech = False
 output_audio = False
@@ -11,10 +14,11 @@ output_audio = False
 class Audio():
 
     def __init__(self):
-        self.recognizer =  sr.Recognizer()
-        self.microphone = sr.Microphone() # Set appropriate device index, e.g `device_index=3`
-        with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source)
+        if input_speech:
+            self.recognizer =  sr.Recognizer()
+            self.microphone = sr.Microphone() # Set appropriate device index, e.g `device_index=3`
+            with self.microphone as source:
+                self.recognizer.adjust_for_ambient_noise(source)
         # self.recognizer.energy_threshold = 900
         self.cache_dir = "cache"
         if not os.path.exists(self.cache_dir):
@@ -29,7 +33,6 @@ class Audio():
         self.stop_listening
 
     def speak(self, text):
-        print("speaking")
         if output_audio:
             hash_object = hashlib.md5(text.encode())
             filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
@@ -37,10 +40,13 @@ class Audio():
                 print(hash_object.hexdigest())
                 open_speech = gTTS(text=text, lang="en", slow=False)
                 open_speech.save(filename)
-
+            print("speaking")
             self.playsound(filename)
+            print("speaking done")
         else:
+            print('------ AUDIO OUTPUT ------')
             print(text)
+            print('--------------------------')
 
 
     def playsound(self, filename):
@@ -51,7 +57,7 @@ class Audio():
             continue
 
 
-    def recognize_speech(self, keywords = []):
+    def recognize_speech(self, app = None, keywords = []):
         """Transcribe speech recorded from `microphone`.
 
         Returns a dictionary with three keys:
@@ -95,5 +101,9 @@ class Audio():
                 response["error"] = "Unable to recognize speech"
         else:
             response["transcription"] = str(input("speech? "))
+
+        # quit / exit command listener
+        if app is not None and response["transcription"].find('quit') != -1 or response["transcription"].find('exit') != -1:
+            app.confirm_quit()
 
         return response

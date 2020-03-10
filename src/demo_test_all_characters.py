@@ -11,7 +11,7 @@ from arduino import *
 #2
 # to copy files from directory over to EV3
 # execute with EV3's IP-address between '@' and ':'
-#   scp __init__.py cell.py characters.py louis.py motor_run.py tests.py robot@192.168.105.1:/home/robot
+#   scp *.py robot@192.168.105.1:/home/robot
 # enter 'maker' as pw
 #3
 # to connect to EV3
@@ -22,17 +22,18 @@ from arduino import *
 # execute
 #   ./[filename]
 
-c = Cell(1, Arduino())
+arduino = Arduino()
+time.sleep(2)
+num_cells = arduino.discover()
+cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
 
 start_tests = time.time()
 
 for letter in "abcdefghijklmnopqrstuvwxyz":
         print('Ready for next letter')
-        while not c.button.is_pressed:
-                pass
-        c.print_character(letter)
-        print("\n :) !!Printed letter: ", letter, "\n",
-            characters.characters[letter], "\n")
+        cells[0].wait_for_button_press()
+        for cell in reversed(cells):
+            cell.print_character(letter)
 
 end = time.time()
 print("\nTime program:" + str(end - start_tests))
