@@ -67,6 +67,12 @@ class App(ABC):
             self.audio.speak("I did not understand.")
             self.app_instruction(instruction) # ask the question again
 
+    def wait_for_audio(self, word):
+        word_pos = -1
+        while (word_pos == -1):
+            print("Listening ...")
+            word_listener = self.audio.recognize_speech(app=self)["transcription"]
+            word_pos = word_listener.find(word)
 
     def get_pressed_button(self):
         # Returns the index of the pressed cell button

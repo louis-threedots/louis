@@ -100,8 +100,8 @@ pronunciation = {
     '*': "asterisk",
     '<': "less than",
     '>': "greater than",
-    '(': "left parentheses",
-    ')': "right parentheses",
+    '(': "left parenthesis",
+    ')': "right parenthesis",
     ' ': "blank space",
     '0': "zero",
     '1': "one",
@@ -112,7 +112,10 @@ pronunciation = {
     '6': "six",
     '7': "seven",
     '8': "eight",
-    '9': "nine"
+    '9': "nine",
+    'CAPITAL': "capital",
+    'LETTER': "letter",
+    'NUMBER': "number"
 }
 
 degrees_small = {

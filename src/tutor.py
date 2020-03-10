@@ -15,9 +15,7 @@ class Tutor(App):
         self.app_instruction("The purpose of this application is to test how much you have learnt from Learn. Let's start testing. "
                              "You can answer the question with any word of your choice that starts with the letter you believe to be the correct answer, "
                              "but avoid using quit or exit unless you want to quit the application.")
-
-        bad_pile, score = self.run_test()
-        self.test_done_instruction(bad_pile, score)
+        self.run_test()
 
     def run_test(self):
         # initialise good_pile and bad_pile
@@ -64,34 +62,40 @@ class Tutor(App):
                     score += 1
                     break
                 else:
+                    answer_output = answer
+                    if answer in pronunciation:
+                        answer_output = pronunciation[answer]
+
                     chances -= 1
                     if chances > 0:
-                        answer_output = answer
-                        if answer in pronunciation:
-                            answer_output = pronunciation[answer]
                         self.audio.speak("You incorrectly answered " + answer_output + ". You have " + str(chances) + " more chances to respond.")
                     else:
-                        self.audio.speak("You have used all your chances to answer. The correct answer is " + pronunciation[c])
+                        self.audio.speak("You incorrectly answered " + answer_output + ". You have used all your chances to answer. The correct answer is " + pronunciation[c])
                         self.audio.speak("I will save this character for later.")
                         bad_pile.append(c)
                         self.audio.speak("Moving on to the next question.")
 
-        return bad_pile, score
+        self.test_done_instruction(bad_pile, score)
 
     def test_done_instruction(self, bad_pile, score):
-        self.audio.speak("Testing is done. You got" + round(score * 100 / len(self.characters_shuffled()), 1) + " percent right. Would you like to go through letters you got wrong?")
-        if self.audio.recognize_speech()["transcription"] == "yes":
-            self.audio.speak("Okay, lets go through the characters you answered wrong.")
-            while self.audio.recognize_speech()["transcription"] != "stop application":
+        score_percentage = round(score * 100 / len(self.characters_shuffled()), 1)
+        self.audio.speak("Testing is done. You got " + str(score_percentage) + " percent right.")
+
+        if score_percentage != 100:
+            self.audio.speak("Would you like to go through letters you got wrong?")
+            if self.audio.recognize_speech()["transcription"] == "yes":
+                self.audio.speak("Okay, lets go through the characters you answered wrong. You can move on to the next character by saying next.")
                 for c in bad_pile:
                     self.cells[1].print_character(c)
-                    print("cell displaying letter " + c)
                     self.audio.speak("This is " + pronunciation[c])
-                    time.sleep(10)
-        elif self.audio.recognize_speech()["transcription"] == "no":
-            self.audio.speak("do you want to take a test again?")
-            if self.audio.recognize_speech()["transcription"] == "yes":
-                self.run_test()
+                    self.wait_for_audio("next")
+                self.audio.speak("That were all the characters you answered wrong.")
+        else:
+            self.audio.speak("Well done!")
+
+        self.audio.speak("Do you want to take another test?")
+        if self.audio.recognize_speech()["transcription"] == "yes":
+            self.run_test()
 
         self.audio.speak("The app will now close itself.")
         self.on_quit()
@@ -104,7 +108,7 @@ class Tutor(App):
             [(char, 'digit') for char in list(string.digits)]
         )
 
-        chars_shuffled = random.sample(chars, len(chars))
+        chars_shuffled = random.sample(chars, 10)
         return chars_shuffled
 
     def punctuation(self):
