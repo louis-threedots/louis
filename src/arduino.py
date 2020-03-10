@@ -23,7 +23,7 @@ class Arduino:
         if main_cell == 'ev3':
             return 1
         elif main_cell == 'comp':
-            return 1
+            return int(input("number of cells? "))
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )

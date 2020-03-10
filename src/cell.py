@@ -112,10 +112,17 @@ class Cell:
             if abs(small_angle) > self.MARGIN:
                 self.rotate_small_to_angle(small_angle, rotate=rotate)
 
+            print("\n :) !!Printed letter:", letter)
+            dots = characters.characters[letter]
+            dots_print = ['.', 'o']
+            print(dots_print[dots[0]], dots_print[dots[3]])
+            print(dots_print[dots[1]], dots_print[dots[4]])
+            print(dots_print[dots[2]], dots_print[dots[5]])
+            print("")
+
             return big_angle, small_angle
 
     def rotate_big_to_angle(self, x, rotate=True):
-            # print("Turning big disc to angle:", x)
             self.rotate_to_rel_angle(x, rotate=rotate)
             if x < 0:
                 self.catch_pos = [(self.motor_position + self.CATCH_SPACING) % 360, self.motor_position]

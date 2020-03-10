@@ -40,10 +40,8 @@ class Alphabet(App):
         word_pos = -1
         while (word_pos == -1):
             print("Listening ...")
-            word_listener = self.audio.recognize_speech()["transcription"]
+            word_listener = self.audio.recognize_speech(app=self)["transcription"]
             word_pos = word_listener.find(word)
-            if word_listener.find('quit') != -1 or word_listener.find('exit') != -1:
-                self.confirm_quit()
 
     def punctuation(self):
         return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
