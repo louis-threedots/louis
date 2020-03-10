@@ -23,7 +23,7 @@ class Arduino:
         if main_cell == 'ev3':
             return 1
         elif main_cell == 'comp':
-            return 3
+            return 1
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )
@@ -43,8 +43,9 @@ class Arduino:
     def run_to_rel_pos(self, rel_angle, cell_index):
         if main_cell == 'ev3':
             self.motor.run_to_rel_pos(position_sp = rel_angle, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            self.motor.wait_until('holding')
-            time.sleep(0.4)
+            if abs(rel_angle) >= 10:
+                self.motor.wait_until('holding')
+            time.sleep(0.5)
         elif main_cell == 'comp':
             return
         else:
@@ -53,13 +54,14 @@ class Arduino:
             else:
                 self.ser.write(bytearray([self.cell_offset+cell_index,103]+self.convert_to_base((-1)*rel_angle)))
 
-    def get_pressed_button(self):
+    def get_pressed_button(self, index=1):
         if main_cell == 'ev3':
             while not self.button.is_pressed:
                 pass
+            return index
         elif main_cell == 'comp':
-            x = str(input("press enter to simulate button press"))
-            return x
+            x = str(input("> Press enter to simulate button press"))
+            return index
         else:
             #TODO: Add timeout
             self.ser.read(self.ser.inWaiting())
