@@ -2,7 +2,7 @@ import serial
 import time
 import ev3dev.ev3 as ev3
 
-main_cell = 'ev3'
+main_cell = 'comp'
 
 class Arduino:
 
@@ -12,6 +12,8 @@ class Arduino:
             if not self.motor.connected:
                 self.motor = ev3.LargeMotor('outA')
             self.button = ev3.TouchSensor('in1')
+        elif main_cell == 'comp':
+            print('Simulating motors')
         else:
             self.ser = serial.Serial('/dev/ttyACM0',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
             self.cell_offset = 96
@@ -20,6 +22,8 @@ class Arduino:
     def discover(self):
         if main_cell == 'ev3':
             return 1
+        elif main_cell == 'comp':
+            return 3
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )
@@ -41,6 +45,8 @@ class Arduino:
             self.motor.run_to_rel_pos(position_sp = rel_angle, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.motor.wait_until('holding')
             time.sleep(0.4)
+        elif main_cell == 'comp':
+            return
         else:
             if rel_angle >= 0:
                 self.ser.write(bytearray([self.cell_offset+cell_index,102]+self.convert_to_base(rel_angle)))
@@ -51,6 +57,9 @@ class Arduino:
         if main_cell == 'ev3':
             while not self.button.is_pressed:
                 pass
+        elif main_cell == 'comp':
+            x = str(input("press enter to simulate button press"))
+            return x
         else:
             #TODO: Add timeout
             self.ser.read(self.ser.inWaiting())

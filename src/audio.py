@@ -44,7 +44,9 @@ class Audio():
 
             self.playsound(filename)
         else:
+            print('------ AUDIO OUTPUT ------')
             print(text)
+            print('--------------------------')
 
 
     def playsound(self, filename):

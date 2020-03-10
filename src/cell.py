@@ -100,33 +100,27 @@ class Cell:
             return True
 
     def rotate_big_to_angle(self, x):
-            print("Turning big disc to angle:", x)
-
             self.rotate_to_rel_angle(x)
-
             self.catch['position'] = [self.motor_position, (self.motor_position + 180) % 360]
             if x < 0:
                 self.catch['position'][0] -= self.CATCH_OFFSET
                 self.catch['position'][1] -= self.CATCH_OFFSET
 
     def rotate_small_to_angle(self, x):
-            print("Turning small disc to angle:", x)
             self.rotate_to_rel_angle(x)
 
     def rotate_to_angle(self, x):
-            print("Turning to angle:", x)
+            print("Turning to absolute angle", x)
             self.arduino.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.arduino.motor.wait_until('holding')
             time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x):
             print("Turning to rel angle", x)
-            # print("pos: ", self.motor_position)
             self.arduino.run_to_rel_pos(x, self.index)
             self.motor_position += x
             self.motor_position = self.motor_position % 360
-            # print("pos: ", self.motor_position)
-    
+
     def wait_for_button_press(self):
         if self.arduino.get_pressed_button() != self.index:
             self.wait_for_button_press()
