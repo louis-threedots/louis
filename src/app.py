@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 try:
     import speech_recognition as sr
 except:
-    print('no sr')
+    print('no speech recognition import')
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):

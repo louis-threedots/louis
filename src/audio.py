@@ -6,7 +6,7 @@ try:
     from gtts import gTTS
     from pygame import mixer
 except:
-    print('no sr')
+    print('no speech recognition import')
 
 input_speech = False
 output_audio = False
@@ -33,7 +33,6 @@ class Audio():
         self.stop_listening
 
     def speak(self, text):
-        print("speaking")
         if output_audio:
             hash_object = hashlib.md5(text.encode())
             filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
@@ -41,10 +40,13 @@ class Audio():
                 print(hash_object.hexdigest())
                 open_speech = gTTS(text=text, lang="en", slow=False)
                 open_speech.save(filename)
-
+            print("speaking")
             self.playsound(filename)
+            print("speaking done")
         else:
+            print('------ AUDIO OUTPUT ------')
             print(text)
+            print('--------------------------')
 
 
     def playsound(self, filename):
@@ -55,7 +57,7 @@ class Audio():
             continue
 
 
-    def recognize_speech(self, keywords = []):
+    def recognize_speech(self, app = None, keywords = []):
         """Transcribe speech recorded from `microphone`.
 
         Returns a dictionary with three keys:
@@ -99,5 +101,9 @@ class Audio():
                 response["error"] = "Unable to recognize speech"
         else:
             response["transcription"] = str(input("speech? "))
+
+        # quit / exit command listener
+        if app is not None and response["transcription"].find('quit') != -1 or response["transcription"].find('exit') != -1:
+            app.confirm_quit()
 
         return response

@@ -16,7 +16,6 @@ for letter in ['l', 'ou', 'i', 's']:
         cells[0].wait_for_button_press()
         for cell in reversed(cells):
             cell.print_character(letter)
-        print("\n :) !!Printed letter: ", letter,"\n")
 
 end = time.time()
 print("\nTime program:" + str(end - start_louis))

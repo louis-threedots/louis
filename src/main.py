@@ -3,7 +3,7 @@ import time
 try:
     import speech_recognition as sr
 except:
-    print('no sr')
+    print('no speech recognition import')
 from audio import Audio
 from arduino import Arduino
 import os

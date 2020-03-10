@@ -112,10 +112,17 @@ class Cell:
             if abs(small_angle) > self.MARGIN:
                 self.rotate_small_to_angle(small_angle, rotate=rotate)
 
+            print("\n :) !!Printed letter:", letter)
+            dots = characters.characters[letter]
+            dots_print = ['.', 'o']
+            print(dots_print[dots[0]], dots_print[dots[3]])
+            print(dots_print[dots[1]], dots_print[dots[4]])
+            print(dots_print[dots[2]], dots_print[dots[5]])
+            print("")
+
             return big_angle, small_angle
 
     def rotate_big_to_angle(self, x, rotate=True):
-            # print("Turning big disc to angle:", x)
             self.rotate_to_rel_angle(x, rotate=rotate)
             if x < 0:
                 self.catch_pos = [(self.motor_position + self.CATCH_SPACING) % 360, self.motor_position]
@@ -123,11 +130,10 @@ class Cell:
                 self.catch_pos = [self.motor_position, (self.motor_position - self.CATCH_SPACING) % 360]
 
     def rotate_small_to_angle(self, x, rotate=True):
-            # print("Turning small disc to angle:", x)
             self.rotate_to_rel_angle(x, rotate=rotate)
 
     def rotate_to_angle(self, x):
-            # print("Turning to angle:", x)
+            print("Turning to absolute angle:", x)
             self.arduino.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
             self.arduino.motor.wait_until('holding')
             time.sleep(0.4)
@@ -140,7 +146,7 @@ class Cell:
             self.motor_position = self.motor_position % 360
 
     def wait_for_button_press(self):
-        if self.arduino.get_pressed_button() != self.index:
+        if self.arduino.get_pressed_button(index=self.index) != self.index:
             self.wait_for_button_press()
         return True
         #TODO return False after timeout
