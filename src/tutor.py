@@ -1,8 +1,9 @@
-from audio import Audio
-from characters import pronunciation
+from src.audio import Audio
+from src.characters import pronunciation
+from src.characters import pronunciation_to_character
 import random
 import time
-from app import App
+from src.app import App
 import string
 
 class Tutor(App):
@@ -55,26 +56,42 @@ class Tutor(App):
                     elif answer_2 == 'no':
                         continue
 
-                if len(c) == 1:
+                if  len(c) == 1: #if the given character is an alphabetical letter
                     # cut down length of input word to one character
                     # to allow 'Apple' for 'A' etc.
-                    if c not in special_indicators and answer not in special_indicators:
+                    if c not in self.special_indicators and answer not in self.special_indicators:
                         answer = answer[0]
+                    if answer == c:
+                        self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
+                        good_pile.append(c)
+                        score += 1
+                        break
+                    else:
+                        chances -= 1
+                        if chances > 0:
+                            self.audio.speak("You incorrectly answered " + answer + ". You have " + str(chances) + " more chances to respond.")
+                        elif chances == 0:
+                            self.audio.speak("You have used all your chances to answer. The correct answer is " + pronunciation[c])
+                            self.audio.speak("I will save this character for later.")
+                            bad_pile.append(c)
+                            self.audio.speak("Moving on to the next question.")
 
-                if answer == c:
-                    self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
-                    good_pile.append(c)
-                    score += 1
-                    break
-                else:
-                    chances -= 1
-                    if chances > 0:
-                        self.audio.speak("You incorrectly answered " + answer + ". You have " + str(chances) + " more chances to respond.")
-                    elif chances == 0:
-                        self.audio.speak("You have used all your chances to answer. The correct answer is " + pronunciation[c])
-                        self.audio.speak("I will save this character for later.")
-                        bad_pile.append(c)
-                        self.audio.speak("Moving on to the next question.")
+                else:   #if the given character is a digit/punctuation/indicator
+
+                    if pronunciation_to_character.get(answer) == c:
+                        self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
+                        good_pile.append(c)
+                        score += 1
+                        break
+                    else:
+                        chances -= 1
+                        if chances > 0:
+                            self.audio.speak("You incorrectly answered " + answer + ". You have " + str(chances) + " more chances to respond.")
+                        elif chances == 0:
+                            self.audio.speak("You have used all your chances to answer. The correct answer is " + pronunciation[c])
+                            self.audio.speak("I will save this character for later.")
+                            bad_pile.append(c)
+                            self.audio.speak("Moving on to the next question.")
 
         self.test_done_instruction(bad_pile, score)
 
