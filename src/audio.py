@@ -28,7 +28,6 @@ class Audio():
     def start_background_listening(self, callback):
         self.stop_listening = self.recognizer.listen_in_background(self.microphone, callback)
 
-
     def stop_background_listening(self):
         self.stop_listening
 
@@ -56,6 +55,27 @@ class Audio():
         while mixer.music.get_busy() == True:
             continue
 
+    def await_response(self, desired_responses):
+        answer = self.recognize_speech()["transcription"]
+        invalid = True
+        desired_response_string = str(desired_responses).strip('[]')
+
+        if answer.find("options") != -1:
+            self.speak("Your options are: " + desired_response_string + '.')
+            invalid = False
+        # TODO: Would love to be able to quit the app from here.
+        if answer.find("quit") != -1:
+           self.speak("Quitting...")
+           return "quit"
+        for d_r in desired_responses:
+            if answer.find(d_r) != -1:
+                response = d_r
+                self.speak("You said: " + response)
+                return response
+        if invalid:
+            self.speak("Invalid option, please try again.")
+        response = self.await_response(desired_responses)
+        return response
 
     def recognize_speech(self, app = None, keywords = []):
         """Transcribe speech recorded from `microphone`.

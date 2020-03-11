@@ -14,7 +14,6 @@ class App(ABC):
         self.name = name
         self.is_open = True
 
-
     @abstractmethod
     def on_start(self):
         # Actions that an app wants to perform on app start
@@ -29,18 +28,14 @@ class App(ABC):
         self.close()
 
     def confirm_quit(self):
-
         self.audio.speak("Would you like to quit this application?")
-        answer = self.audio.recognize_speech()["transcription"]
-
+        #answer = self.audio.recognize_speech()["transcription"]
+        response = self.audio.await_response(["yes","no"])
         # take answer from the user
-        if answer.find('yes') != -1:
+        if response == "yes":
             self.on_quit()
-        elif answer.find('no') != -1:
+        elif response == "no":
             self.audio.speak("You're returning to the app.")
-        else:
-            self.audio.speak("I did not understand.")
-            self.confirm_quit() # ask the question again
 
     def close(self):
         self.is_open = False
@@ -54,19 +49,12 @@ class App(ABC):
         pass
 
     def app_instruction(self, instruction):
-
         self.audio.speak("Would you like to listen to an instruction for this application?")
-        answer = self.audio.recognize_speech()["transcription"]
-
-        # take answer from the user
-        if answer.find('yes') != -1:
+        response = self.audio.await_response(['yes','no'])
+        if response == "yes":
             self.audio.speak("Welcome to " + self.name + ". " + instruction)
-        elif answer.find('no') != -1:
+        elif response == "no":
             self.audio.speak("skipping instruction")
-        else:
-            self.audio.speak("I did not understand.")
-            self.app_instruction(instruction) # ask the question again
-
 
     def get_pressed_button(self):
         # Returns the index of the pressed cell button
