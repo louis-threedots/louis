@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-from cell import *
-from arduino import *
+from src.cell import *
+from src.arduino import *
 
 arduino = Arduino()
 time.sleep(2)
