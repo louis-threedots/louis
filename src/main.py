@@ -30,14 +30,13 @@ def main():
         response = audio.recognize_speech()
         if response["transcription"] != "":
             before_keyword, keyword, app_name = response["transcription"].partition("open")
-            open_app(app_name, cells, audio, arduino)
+            if app_name != '': # found command 'open'
+                open_app(app_name, cells, audio, arduino)
 
 def open_app(app_name, cells, audio, arduino):
     current_app = None
 
-    app_name = app_name.replace(" ","")
-    if app_name.endswith("app"):
-        app_name = app_name[:-3]
+    app_name = app_name.replace(" ", "")
 
     print(app_name)
     if app_name == 'learn':
