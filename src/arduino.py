@@ -2,7 +2,7 @@ import serial
 import time
 import ev3dev.ev3 as ev3
 
-main_cell = 'comp'
+main_cell = 'arduino'
 
 class Arduino:
 
@@ -71,7 +71,7 @@ class Arduino:
             return button_message[3] - self.cell_offset
 
 
-    def ping(cell_index):
+    def ping(self, cell_index):
         #TODO: Add timeout
         self.ser.write(bytearray([self.cell_offset+cell_index,106,0,0]))
         pong = self.ser.read(4)

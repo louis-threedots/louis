@@ -145,6 +145,10 @@ class Cell:
             self.motor_position += x
             self.motor_position = self.motor_position % 360
 
+    def has_finished_rotating(self):
+        # Returns true if the cell has finished rendering
+        return self.arduino.ping(self.index)
+
     def wait_for_button_press(self):
         if self.arduino.get_pressed_button(index=self.index) != self.index:
             self.wait_for_button_press()
