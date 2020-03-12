@@ -22,8 +22,19 @@ class Tutor(App):
         good_pile = []
         bad_pile = []
 
-        score = 0
-        for (c, chartype) in self.characters_shuffled():
+        self.audio.speak("How would you like the length of the test to be? Please choose one of the following: short, medium or full.")
+        test_length_reply = self.audio.recognize_speech(app=self)["transcription"]
+
+        if "short" in test_length_reply:
+            test_length = "short"
+        elif "medium" in test_length_reply:
+            test_length = "medium"
+        elif "full" in test_length_reply:
+            test_length = "full"
+        else:
+            test_length = "short"
+
+        for (c, chartype) in self.characters_shuffled(test_length=test_length):
             # initialise variables for each question
             chances = 3
             # display each character
@@ -56,10 +67,9 @@ class Tutor(App):
                 else: # digit or punctuation
                     correct_answer = pronunciation[c]
 
-                if answer.find(correct_answer) != -1:
+                if answer.find(correct_answer) != -1: # TODO when given answer is 'semicolon', it will say correct if true answer 'colon'
                     self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
                     good_pile.append(c)
-                    score += 1
                     break
                 else:
                     answer_output = answer
@@ -75,10 +85,10 @@ class Tutor(App):
                         bad_pile.append(c)
                         self.audio.speak("Moving on to the next question.")
 
-        self.test_done_instruction(bad_pile, score)
+        self.test_done_instruction(bad_pile, good_pile)
 
-    def test_done_instruction(self, bad_pile, score):
-        score_percentage = round(score * 100 / len(self.characters_shuffled()), 1)
+    def test_done_instruction(self, bad_pile, good_pile):
+        score_percentage = round(len(good_pile) * 100 / len(bad_pile + good_pile), 1)
         self.audio.speak("Testing is done. You got " + str(score_percentage) + " percent right.")
 
         if score_percentage != 100:
@@ -100,7 +110,7 @@ class Tutor(App):
         self.audio.speak("The app will now close itself.")
         self.on_quit()
 
-    def characters_shuffled(self):
+    def characters_shuffled(self, test_length='short'):
         chars = (
             [(char, 'alphabet') for char in list(string.ascii_lowercase)] +
             [(char, 'punctuation') for char in self.punctuation()] +
@@ -108,7 +118,13 @@ class Tutor(App):
             [(char, 'digit') for char in list(string.digits)]
         )
 
-        chars_shuffled = random.sample(chars, 10)
+        test_lengths = {
+            'short': 10,
+            'medium': 20,
+            'full': len(chars)
+        }
+
+        chars_shuffled = random.sample(chars, test_lengths[test_length])
         return chars_shuffled
 
     def punctuation(self):
