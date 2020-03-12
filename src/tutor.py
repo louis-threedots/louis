@@ -121,7 +121,7 @@ class Tutor(App):
 
         chars_shuffled_short = random.sample(chars, 10)
         chars_shuffled_mid = random.sample(chars, 20)
-        chars_shuffled_full = random.sample(chars, len(chars))
+        chars_shuffled_full = random.sample(chars, len(chars[0])+len(chars[1])+len(chars[2])+len(chars[3]))
 
         if test_length == "short":
             return chars_shuffled_short
