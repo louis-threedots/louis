@@ -21,7 +21,7 @@ class Headlines(App):
 
         article_ptr = ptr
         options = ["next","back","more","again","home","quit"]
-        instructions = "Say \"next\" or \"back\" to go to the next or the previous article, \"more\" if you would like to read more, \"again\" to read the headline again and \"home\" to return to the beginning."
+        #instructions = "Say \"next\" or \"back\" to go to the next or the previous article, \"more\" if you would like to read more, \"again\" to read the headline again and \"home\" to return to the beginning."
         #Get RSS feed given catagory
         feed = feedparser.parse("http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/"+category+"/rss.xml")
 
@@ -31,7 +31,8 @@ class Headlines(App):
         while True:
             if show:
                 #TODO: print to harware!!!
-                print(article_list[article_ptr].title)
+                self.app.print_text(article_list[article_ptr].title)
+                #print(article_list[article_ptr].title)
             response = self.audio.await_response(options)
             if response == "quit":
                 self.confirm_quit()
@@ -52,7 +53,8 @@ class Headlines(App):
                     show = True
 
             elif response == "more":
-                print(article_list[article_ptr].summary)
+                self.app.print_text(article_list[article_ptr].summary)
+                #print(article_list[article_ptr].summary)
                 show = False
 
             elif response == "again":
@@ -85,12 +87,3 @@ class Headlines(App):
         #self.cells[0].print_character("a")
         self.app_instruction("This will allow you to read the news in braille! To hear your options at any point say \"options\".")
         self.main()
-
-'''a = Arduino()
-c = Cell(0,1)
-c1 = Cell(2,2)
-cells = [c,c1]
-aud = Audio()
-h = Headlines("The BBC Headlines App",cells,aud,a)
-h.on_start()
-'''

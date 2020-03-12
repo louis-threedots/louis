@@ -63,3 +63,16 @@ class App(ABC):
     def is_cell_finished(self, index):
         # Returns true if all the cells have finished rendering
         return self.arduino.ping(index)
+
+    def print_text(self, text):
+        to_print = []
+        for i in range(0,len(text)):
+            to_print.append(text[i])
+
+            if len(to_print) == len(self.cells) or i == len(text)-1 :
+                # Letters need to be passed in reverse in order to be processed in parallel
+                for j in range(len(to_print)-1,-1,-1):
+                    self.cells[j].print_character(to_print(j))
+                # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
+                self.cells[-1].wait_for_button_press()
+                to_print = []
