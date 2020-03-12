@@ -2,7 +2,7 @@ import serial
 import time
 import ev3dev.ev3 as ev3
 
-main_cell = 'comp'
+main_cell = 'arduino'
 
 class Arduino:
 
@@ -15,7 +15,10 @@ class Arduino:
         elif main_cell == 'comp':
             print('Simulating motors')
         else:
-            self.ser = serial.Serial('/dev/ttyACM0',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
+            try:
+                self.ser = serial.Serial('/dev/ttyACM0',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
+            except:
+                self.ser = serial.Serial('/dev/ttyACM1',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
             self.cell_offset = 96
             # self.discover()
 
@@ -71,7 +74,7 @@ class Arduino:
             return button_message[3] - self.cell_offset
 
 
-    def ping(cell_index):
+    def ping(self, cell_index):
         #TODO: Add timeout
         self.ser.write(bytearray([self.cell_offset+cell_index,106,0,0]))
         pong = self.ser.read(4)

@@ -43,7 +43,9 @@ class App(ABC):
             self.confirm_quit() # ask the question again
 
     def close(self):
+        from main import main_menu
         self.is_open = False
+        main_menu(self.arduino, self.cells, self.audio)
 
     def load_state(self, state):
         #TODO: Rehydrate app state from local file system
@@ -78,9 +80,12 @@ class App(ABC):
         # Returns the index of the pressed cell button
         return self.arduino.get_pressed_button()
 
-    def is_cell_finished(self, index):
+    def wait_for_all_cells_finished(self):
         # Returns true if all the cells have finished rendering
-        return self.arduino.ping(index)
+        cells_finished_rotating = [False] * len(self.cells)
+        while False in cells_finished_rotating:
+            for cell in self.cells:
+                cells_finished_rotating[cell.index - 1] = cell.has_finished_rotating()
 
     def print_text(self, text):
         to_print = []

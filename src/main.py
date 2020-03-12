@@ -14,7 +14,8 @@ from cell import Cell
 from alphabet import Alphabet
 from tutor import Tutor
 
-def main():
+
+def discover():
     print("Louis has started. Running cell discovery ...")
     arduino = Arduino()
     time.sleep(2)
@@ -22,9 +23,16 @@ def main():
     print(num_cells)
     cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
     print("Cell discovery completed. "+str(num_cells)+" cells found.")
-    audio = Audio()
-    audio.speak("Welcome to Louis the brailliant assistant. You can now open any application using voice commands.")
+    return arduino, cells
 
+def main():
+    arduino, cells = discover()
+    audio = Audio()
+    audio.speak("Welcome to Louis the brailliant assistant.")
+    main_menu(arduino, cells, audio)
+
+def main_menu(arduino, cells, audio):
+    audio.speak("You can now open any application using voice commands.")
     while (True):
         print("Listening ...")
         response = audio.recognize_speech()
