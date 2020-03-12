@@ -1,103 +1,152 @@
 #! /usr/bin/python3
 import time
-import ev3dev.ev3 as ev3
 import characters
+#import ev3dev.ev3 as ev3
 
 class Cell:
 
-    def __init__(self, motorPort, buttonPort):
-            self.catch = {'position': 360, 'clockwise': 3}
-            self.motor = ev3.LargeMotor('out' + str(motorPort))
-            self.button = ev3.TouchSensor('in' + str(buttonPort))
-            self.CATCH_OFFSET = 20
+    def __init__(self, index, arduino):
+            self.MARGIN = 3
+            self.CATCH_SPACING = 90
+            self.set_to_default()
+            self.arduino = arduino
+            self.index = index
 
-    def rotate(self, letter):
-            degrees = self.get_degrees(letter)
+    def set_to_default(self):
+            self.catch_pos = [0, - self.CATCH_SPACING]
+            self.motor_position = 0
+            self.big_position = 0
+            self.small_position = 0
 
-            score_clockwise = {
-                'from_pos_to_catch': (self.catch['position'] - self.motor.position_sp + self.catch['clockwise']) % 360 - self.catch['clockwise'],
-                'from_catch_to_big': (degrees[0] - self.catch['position']) % 360,
-                'from_big_to_small': (degrees[0] - degrees[1]) % 360
-            }
-            score_anti_clockwise = {
-                'from_pos_to_catch': (self.motor.position_sp - self.catch['position'] - self.catch['clockwise'] - self.CATCH_OFFSET) % 360 + self.catch['clockwise'],
-                'from_catch_to_big': (self.catch['position'] - degrees[0]) % 360,
-                'from_big_to_small': (degrees[1] - degrees[0] + self.catch['clockwise'] - self.CATCH_OFFSET) % 360 - self.catch['clockwise']
-            }
+    def get_from_pos_to_catch(self, direction):
+        if direction == 'clockwise':
+            dist = (self.catch_pos[0] - self.motor_position) % 360
+            return self.catch_pos[0], dist
+        else:
+            dist = (self.motor_position - self.catch_pos[1]) % 360
+            return self.catch_pos[1], dist
 
-            print("\nCLOCKWISE:")
-            print("(", self.catch['position'], "-", self.motor.position_sp, "+", self.catch['clockwise'], ") % 360 - ", self.catch['clockwise'])
-            print("(", degrees[0], "-", self.catch['position'], ") % 360")
-            print("(", degrees[0], "-", degrees[1], ") % 360")
-            print("Clockwise: ", score_clockwise)
+    def get_optimal_rel_angles(self, letter):
+            degrees = characters.character_degrees(letter)
 
-            print("\nANTI:")
-            print("(", self.motor.position_sp, "-", self.catch['position'], "-", self.catch['clockwise'], "-", self.CATCH_OFFSET, ") % 360 + ", self.catch['clockwise'])
-            print("(", self.catch['position'], "-", degrees[0], ") % 360")
-            print("(", degrees[1], "-", degrees[0], "+", self.catch['clockwise'], "-", self.CATCH_OFFSET, ") % 360 - ", self.catch['clockwise'])
-            print("Anti-clockwise: ", score_anti_clockwise)
+            clockwise_catch_pos, clockwise_from_pos_to_catch = self.get_from_pos_to_catch('clockwise')
+            anti_clockwise_catch_pos, anti_clockwise_from_pos_to_catch = self.get_from_pos_to_catch('anti_clockwise')
 
-            print("\nFinal values: ", sum(score_clockwise.values()), sum(score_anti_clockwise.values()), "\n")
+            scores_clockwise = []
+            scores_anti_clockwise = []
+
+            for i, degree_small in enumerate(degrees['small']):
+                for j, degree_big in enumerate(degrees['big']):
+                    # clockwise
+                    clockwise_degrees_big = degree_big
+                    clockwise_from_big_to_small_degree = (degree_big - degree_small) % 360
+                    if clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
+                        # print('clockwise')
+                        # print('from_catch_to_big: (', str(clockwise_degrees_big), '-', str(clockwise_catch_pos), ') % 360 = ', str((clockwise_degrees_big - clockwise_catch_pos) % 360))
+                        # print('from_big_to_small: ', str(clockwise_from_big_to_small_degree))
+                        scores_clockwise.append(
+                            {
+                                'from_catch_to_big': (clockwise_degrees_big - clockwise_catch_pos) % 360,
+                                'from_big_to_small': clockwise_from_big_to_small_degree
+                            }
+                        )
+                    # anticlockwise
+                    anti_clockwise_degrees_big = degree_big
+                    anti_clockwise_from_big_to_small_degree = (degree_small - degree_big + self.CATCH_SPACING) % 360
+                    if anti_clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
+                        # print('anticlockwise')
+                        # print('from_catch_to_big: (', str(anti_clockwise_catch_pos), '-', str(anti_clockwise_degrees_big), '+', str(self.CATCH_SPACING ), ') % 360 = ', str((anti_clockwise_catch_pos - anti_clockwise_degrees_big + self.CATCH_SPACING) % 360))
+                        # print('from_big_to_small: ', str(anti_clockwise_from_big_to_small_degree))
+                        scores_anti_clockwise.append(
+                            {
+                                'from_catch_to_big': (anti_clockwise_catch_pos - anti_clockwise_degrees_big + self.CATCH_SPACING) % 360,
+                                'from_big_to_small': anti_clockwise_from_big_to_small_degree
+                            }
+                        )
+
+            # print('')
+            # print('motor position:', str(self.motor_position))
+            # print('catch positions:')
+            # print(self.catch_pos)
+            # print('clockwise_from_pos_to_catch:', str(clockwise_from_pos_to_catch))
+            # print('anti_clockwise_from_pos_to_catch:', str(anti_clockwise_from_pos_to_catch))
+
+            idx_min_score_clockwise = scores_clockwise.index(min(scores_clockwise, key=lambda x: sum(x.values())))
+            score_clockwise = scores_clockwise[idx_min_score_clockwise]
+            score_clockwise['from_pos_to_catch'] = clockwise_from_pos_to_catch
+
+            idx_min_score_anti_clockwise = scores_anti_clockwise.index(min(scores_anti_clockwise, key=lambda x: sum(x.values())))
+            score_anti_clockwise = scores_anti_clockwise[idx_min_score_anti_clockwise]
+            score_anti_clockwise['from_pos_to_catch'] = anti_clockwise_from_pos_to_catch
 
             if sum(score_clockwise.values()) <= sum(score_anti_clockwise.values()):
-                self.catch['clockwise'] = 3
-
                 small_angle = - score_clockwise['from_big_to_small']
-                if(score_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
+                if(abs(score_clockwise['from_catch_to_big']) <= self.MARGIN): # big disc already in correct position
                     big_angle = 0
                     small_angle += score_clockwise['from_pos_to_catch']
                 else:
+                    self.big_position += score_clockwise['from_catch_to_big']
                     big_angle = score_clockwise['from_pos_to_catch'] + score_clockwise['from_catch_to_big']
             else:
-                self.catch['clockwise'] = -3
-
                 small_angle = score_anti_clockwise['from_big_to_small']
-                if(score_anti_clockwise['from_catch_to_big'] == 0): # big disc already in correct position
+                if(abs(score_anti_clockwise['from_catch_to_big']) <= self.MARGIN): # big disc already in correct position
                     big_angle = 0
                     small_angle -= score_anti_clockwise['from_pos_to_catch']
                 else:
+                    self.big_position -= score_anti_clockwise['from_catch_to_big']
                     big_angle = - score_anti_clockwise['from_pos_to_catch'] - score_anti_clockwise['from_catch_to_big']
 
-            print(big_angle, small_angle)
+            self.big_position = self.big_position % 360
+            self.small_position += big_angle + small_angle
+            self.small_position = self.small_position % 360
+            assert(self.big_position in degrees['big'])
+            assert(self.small_position in degrees['small'])
 
-            if big_angle != 0:
-                self.rotate_big_to_angle(big_angle)
-            if small_angle != 0:
-                self.rotate_small_to_angle(small_angle)
+            return big_angle, small_angle
 
-    def rotate_big_to_angle(self, x):
-            print("Turning big disc to angle:", x)
+    def print_character(self, letter, rotate=True):
+            big_angle, small_angle = self.get_optimal_rel_angles(letter)
 
-            self.rotate_to_rel_angle(x)
+            if abs(big_angle) > self.MARGIN:
+                self.rotate_big_to_angle(big_angle, rotate=rotate)
+            if abs(small_angle) > self.MARGIN:
+                self.rotate_small_to_angle(small_angle, rotate=rotate)
 
-            self.catch['position'] = self.motor.position_sp
+            print("\n :) !!Printed letter:", letter)
+            dots = characters.characters[letter]
+            dots_print = ['.', 'o']
+            print(dots_print[dots[0]], dots_print[dots[3]])
+            print(dots_print[dots[1]], dots_print[dots[4]])
+            print(dots_print[dots[2]], dots_print[dots[5]])
+            print("")
+
+            return big_angle, small_angle
+
+    def rotate_big_to_angle(self, x, rotate=True):
+            self.rotate_to_rel_angle(x, rotate=rotate)
             if x < 0:
-                self.catch['position'] -= self.CATCH_OFFSET
+                self.catch_pos = [(self.motor_position + self.CATCH_SPACING) % 360, self.motor_position]
+            else:
+                self.catch_pos = [self.motor_position, (self.motor_position - self.CATCH_SPACING) % 360]
 
-    def rotate_small_to_angle(self, x):
-            print("Turning small disc to angle:", x)
-
-            self.rotate_to_rel_angle(x)
+    def rotate_small_to_angle(self, x, rotate=True):
+            self.rotate_to_rel_angle(x, rotate=rotate)
 
     def rotate_to_angle(self, x):
-            print("Turning to angle:", x)
-            self.motor.run_to_abs_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
-            self.motor.wait_until('holding')
+            print("Turning to absolute angle:", x)
+            self.arduino.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
+            self.arduino.motor.wait_until('holding')
             time.sleep(0.4)
 
-    def rotate_to_rel_angle(self, x):
-            print("Turning to rel angle", x)
-            print("pos: ", self.motor.position_sp, self.motor.position)
-            self.motor.run_to_rel_pos(position_sp = x, speed_sp = 150, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 20)
-            self.motor.wait_until('holding')
-            time.sleep(0.4)
-            print("pos: ", self.motor.position_sp, self.motor.position)
-            # weird bug: self.motor.position_sp = 225 before a -255 turn, then afterwards self.motor.position_sp = -225
-            # fix it by taking self.motor.position instead of self.motor.position_sp in this assignment:
-            self.motor.position_sp = self.motor.position % 360
-            print("pos: ", self.motor.position_sp, self.motor.position)
+    def rotate_to_rel_angle(self, x, rotate=True):
+            if rotate:
+                print("Turning to rel angle", x)
+                self.arduino.run_to_rel_pos(x, self.index)
+            self.motor_position += x
+            self.motor_position = self.motor_position % 360
 
-    def get_degrees(self, letter):
-        degrees = characters.character_degrees(letter)
-
-        return degrees
+    def wait_for_button_press(self):
+        if self.arduino.get_pressed_button(index=self.index) != self.index:
+            self.wait_for_button_press()
+        return True
+        #TODO return False after timeout

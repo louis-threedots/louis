@@ -10,7 +10,8 @@ pyaudio = "*"
 speechrecognition = "*"
 gtts = "*"
 playsound = "*"
-pocketsphinx = "*"
+pygame = "*"
+pyserial = "*"
 
 [requires]
 python_version = "3.5"
