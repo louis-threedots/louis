@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 import time
 import characters
-#import ev3dev.ev3 as ev3
 
 class Cell:
 

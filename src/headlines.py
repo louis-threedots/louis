@@ -30,8 +30,7 @@ class Headlines(App):
         show = True
         while True:
             if show:
-                #TODO: print to harware!!!
-                self.app.print_text(article_list[article_ptr].title)
+                self.print_text(article_list[article_ptr].title)
                 #print(article_list[article_ptr].title)
             response = self.audio.await_response(options)
             if response == "quit":

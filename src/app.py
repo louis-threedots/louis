@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from characters import indicator_dict
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -67,14 +68,24 @@ class App(ABC):
         self.wait_for_all_cells_finished()
 
     def print_text(self, text):
-        to_print = []
-        for i in range(0,len(text)):
-            to_print.append(text[i])
+        prepared_text = []
+        for letter in text:
+            if letter not in indicator_dict:
+                if letter.isupper():
+                    prepared_text.append('CAPITAL')
+                    letter = letter.lower()
+                elif letter.isdigit():
+                    prepared_text.append('NUMBER')
+            prepared_text.append(letter)
 
-            if len(to_print) == len(self.cells) or i == len(text)-1 :
+        to_print = []
+        for i in range(0,len(prepared_text)):
+            to_print.append(prepared_text[i])
+
+            if len(to_print) == len(self.cells) or i == len(prepared_text)-1 :
                 # Letters need to be passed in reverse in order to be processed in parallel
                 for j in range(len(to_print)-1,-1,-1):
-                    self.cells[j].print_character(to_print(j))
+                    self.cells[j].print_character(to_print[j])
                 # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
                 self.cells[-1].wait_for_button_press()
                 to_print = []
