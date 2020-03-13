@@ -42,10 +42,10 @@ class Audio():
             print("speaking")
             self.playsound(filename)
             print("speaking done")
-        else:
-            print('------ AUDIO OUTPUT ------')
-            print(text)
-            print('--------------------------')
+
+        print('------ AUDIO OUTPUT ------')
+        print(text)
+        print('--------------------------')
 
 
     def playsound(self, filename):

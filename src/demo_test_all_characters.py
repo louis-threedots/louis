@@ -1,9 +1,6 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-import characters
-from cell import *
-from arduino import *
 
 # TO RUN ON EV3:
 #1
@@ -18,14 +15,16 @@ from arduino import *
 # execute with EV3's IP-address after '@'
 #   ssh robot@192.168.105.1
 #4
+# to make file executable, change the chmod 600 to 700
+# execute
+#   sudo chmod 700 [filename]
+#5
 # to run file
 # execute
 #   ./[filename]
 
-arduino = Arduino()
-time.sleep(2)
-num_cells = arduino.discover()
-cells = [Cell(i, arduino) for i in range(1,num_cells+1)]
+from main_functions import discover
+arduino, cells = discover()
 
 start_tests = time.time()
 
