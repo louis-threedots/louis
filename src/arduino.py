@@ -72,7 +72,7 @@ class Arduino:
             while button_message[1]!= 105:
                 button_message = self.ser.read(4)
             button_id = button_message[2] - self.cell_offset
-            button_pressed_time = button_message[3]
+            button_pressed_time = button_message[3] / 60 #convert to seconds
             return (button_id, button_pressed_time)
 
 
