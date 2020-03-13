@@ -1,5 +1,5 @@
 from audio import Audio
-from characters import pronunciation
+from characters import *
 import random
 import time
 from app import App
@@ -12,9 +12,11 @@ class Tutor(App):
         #self.audio.start_background_listening('stop')
 
         # instruction when app started, skip when user says skip
-        self.app_instruction("The purpose of this application is to test how much you have learnt from Learn. Let's start testing. "
-                             "You can answer the question with any word of your choice that starts with the letter you believe to be the correct answer, "
-                             "but avoid using quit or exit unless you want to quit the application.")
+        self.app_instruction("""
+            The purpose of this application is to test how much you have learnt from Learn. Let's start testing.
+            You can answer the question with any word of your choice that starts with the letter you believe to be the correct answer,
+            but avoid using quit or exit unless you want to quit the application.
+        """)
         self.run_test()
 
     def run_test(self):
@@ -37,8 +39,8 @@ class Tutor(App):
         for (c, chartype) in self.characters_shuffled(test_length=test_length):
             # initialise variables for each question
             chances = 3
-            # display each character
-            self.cells[1].print_character(c)
+            # display the character
+            self.print_character_all_cells(c)
 
             #give instruction: digit/punctuation/special indicator/alphabet
             chartypes_output = {
@@ -65,22 +67,22 @@ class Tutor(App):
                 elif chartype == 'indicator':
                     correct_answer = c.lower()
                 else: # digit or punctuation
-                    correct_answer = pronunciation[c]
+                    correct_answer = character_dict[c]['pronunciation']
 
-                if answer.find(correct_answer) != -1: # TODO when given answer is 'semicolon', it will say correct if true answer 'colon'
-                    self.audio.speak('You correctly answered ' + pronunciation[c] + '! Moving on to the next question.')
+                if answer == correct_answer:
+                    self.audio.speak('You correctly answered ' + character_dict[c]['pronunciation'] + '! Moving on to the next question.')
                     good_pile.append(c)
                     break
                 else:
                     answer_output = answer
-                    if answer in pronunciation:
-                        answer_output = pronunciation[answer]
+                    if answer in character_dict: # mainly for 'a' => 'ay'
+                        answer_output = character_dict[answer]['pronunciation']
 
                     chances -= 1
                     if chances > 0:
                         self.audio.speak("You incorrectly answered " + answer_output + ". You have " + str(chances) + " more chances to respond.")
                     else:
-                        self.audio.speak("You incorrectly answered " + answer_output + ". You have used all your chances to answer. The correct answer is " + pronunciation[c])
+                        self.audio.speak("You incorrectly answered " + answer_output + ". You have used all your chances to answer. The correct answer is " + character_dict[c]['pronunciation'])
                         self.audio.speak("I will save this character for later.")
                         bad_pile.append(c)
                         self.audio.speak("Moving on to the next question.")
@@ -93,29 +95,28 @@ class Tutor(App):
 
         if score_percentage != 100:
             self.audio.speak("Would you like to go through letters you got wrong?")
-            if self.audio.recognize_speech()["transcription"] == "yes":
-                self.audio.speak("Okay, lets go through the characters you answered wrong. You can move on to the next character by saying next.")
+            if self.audio.recognize_speech(app=self)["transcription"].find('yes') != -1:
+                self.audio.speak("Okay, let's go through the characters you answered wrong. You can move on to the next character by saying next.")
                 for c in bad_pile:
-                    self.cells[1].print_character(c)
-                    self.audio.speak("This is " + pronunciation[c])
+                    self.print_character_all_cells(c)
+                    self.audio.speak("This is " + character_dict[c]['pronunciation'])
                     self.wait_for_audio("next")
                 self.audio.speak("That were all the characters you answered wrong.")
         else:
             self.audio.speak("Well done!")
 
         self.audio.speak("Do you want to take another test?")
-        if self.audio.recognize_speech()["transcription"] == "yes":
+        if self.audio.recognize_speech()["transcription"].find('yes') != -1:
             self.run_test()
 
-        self.audio.speak("The app will now close itself.")
         self.on_quit()
 
     def characters_shuffled(self, test_length='short'):
         chars = (
-            [(char, 'alphabet') for char in list(string.ascii_lowercase)] +
-            [(char, 'punctuation') for char in self.punctuation()] +
-            [(char, 'indicator') for char in self.special_indicators()] +
-            [(char, 'digit') for char in list(string.digits)]
+            [(char, 'alphabet') for char in alphabet_dict] +
+            [(char, 'punctuation') for char in punctuation_dict] +
+            [(char, 'indicator') for char in indicator_dict] +
+            [(char, 'digit') for char in digit_dict]
         )
 
         test_lengths = {
@@ -126,9 +127,3 @@ class Tutor(App):
 
         chars_shuffled = random.sample(chars, test_lengths[test_length])
         return chars_shuffled
-
-    def punctuation(self):
-        return ['.', ',', ';', ':', '/', '?', '!', '@', '#', '+', '-', '*', '<', '>', '(', ')', ' ']
-
-    def special_indicators(self):
-        return ["CAPITAL", "LETTER", "NUMBER"]
