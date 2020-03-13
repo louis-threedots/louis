@@ -45,6 +45,9 @@ class Arduino:
     def run_to_rel_pos(self, rel_angle, cell_index):
         if self.main_cell == 'ev3':
             self.motor.run_to_rel_pos(position_sp = rel_angle, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
+            if abs(rel_angle) >= 10:
+                self.motor.wait_until('holding')
+            time.sleep(0.5)
         elif self.main_cell == 'comp':
             return
         else:
@@ -72,9 +75,6 @@ class Arduino:
 
     def ping(self, cell_index):
         if self.main_cell == 'ev3':
-            if abs(rel_angle) >= 10:
-                self.motor.wait_until('holding')
-            time.sleep(0.5)
             return True
         elif self.main_cell == 'comp':
             return True
