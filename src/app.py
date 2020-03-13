@@ -1,8 +1,4 @@
 from abc import ABC, abstractmethod
-try:
-    import speech_recognition as sr
-except:
-    print('no speech recognition import')
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -12,8 +8,6 @@ class App(ABC):
         self.audio = audio
         self.arduino = arduino
         self.name = name
-        self.is_open = True
-
 
     @abstractmethod
     def on_start(self):
@@ -22,11 +16,13 @@ class App(ABC):
 
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
-        self.audio.speak("Goodbye.")
+        self.audio.speak("The app will now close itself. Goodbye.")
         for cell in reversed(self.cells):
             cell.rotate_to_rel_angle(720 - cell.motor_position)
-        print("Quitting")
-        self.close()
+            cell.set_to_default()
+        # return to main thread
+        from main_functions import main_menu
+        main_menu(self.arduino, self.cells, self.audio)
 
     def confirm_quit(self):
 
@@ -41,11 +37,6 @@ class App(ABC):
         else:
             self.audio.speak("I did not understand.")
             self.confirm_quit() # ask the question again
-
-    def close(self):
-        from main import main_menu
-        self.is_open = False
-        main_menu(self.arduino, self.cells, self.audio)
 
     def load_state(self, state):
         #TODO: Rehydrate app state from local file system
@@ -86,6 +77,11 @@ class App(ABC):
         while False in cells_finished_rotating:
             for cell in self.cells:
                 cells_finished_rotating[cell.index - 1] = cell.has_finished_rotating()
+
+    def print_character_all_cells(self, c):
+        for cell in reversed(self.cells):
+            cell.print_character(c)
+        self.wait_for_all_cells_finished()
 
     def print_text(self, text):
         to_print = []

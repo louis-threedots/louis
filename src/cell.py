@@ -99,8 +99,18 @@ class Cell:
             self.big_position = self.big_position % 360
             self.small_position += big_angle + small_angle
             self.small_position = self.small_position % 360
-            assert(self.big_position in degrees['big'])
-            assert(self.small_position in degrees['small'])
+            try:
+                assert(self.big_position in degrees['big'])
+                assert(self.small_position in degrees['small'])
+            except:
+                print("Believed big-disk position:", str(self.big_position))
+                print("Needs to be at one of:")
+                print(degrees['big'])
+                print("Believed small-disk position:", str(self.small_position))
+                print("Needs to be at one of:")
+                print(degrees['small'])
+                assert(self.big_position in degrees['big'])
+                assert(self.small_position in degrees['small'])
 
             return big_angle, small_angle
 
@@ -113,7 +123,7 @@ class Cell:
                 self.rotate_small_to_angle(small_angle, rotate=rotate)
 
             print("\n :) !!Printed letter:", letter)
-            dots = characters.characters[letter]
+            dots = characters.character_dict[letter]['dots']
             dots_print = ['.', 'o']
             print(dots_print[dots[0]], dots_print[dots[3]])
             print(dots_print[dots[1]], dots_print[dots[4]])
