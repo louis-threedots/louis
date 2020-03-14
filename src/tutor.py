@@ -1,9 +1,6 @@
-from audio import Audio
 from characters import *
 import random
-import time
 from app import App
-import string
 
 class Tutor(App):
 

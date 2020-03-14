@@ -21,7 +21,7 @@ class Audio():
                 self.recognizer.adjust_for_ambient_noise(source)
         # self.recognizer.energy_threshold = 900
         self.cache_dir = "cache"
-        if not os.path.exists(self.cache_dir):
+        if not os.path.exists('src/' + self.cache_dir):
             os.makedirs(self.cache_dir)
 
 

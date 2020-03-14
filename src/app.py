@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import os
+import json
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -8,6 +10,7 @@ class App(ABC):
         self.audio = audio
         self.arduino = arduino
         self.name = name
+        self.settings = self.load_settings()
 
     @abstractmethod
     def on_start(self):
@@ -17,6 +20,7 @@ class App(ABC):
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
         self.audio.speak("The app will now close itself. Goodbye.")
+        self.save_settings()
         for cell in reversed(self.cells):
             cell.rotate_to_rel_angle(720 - cell.motor_position)
             cell.set_to_default()
@@ -38,13 +42,25 @@ class App(ABC):
             self.audio.speak("I did not understand.")
             self.confirm_quit() # ask the question again
 
-    def load_state(self, state):
-        #TODO: Rehydrate app state from local file system
-        pass
+    def load_settings(self):
+        # Rehydrate app settings from local file system
+        filename = self.name.lower() + '_state'
+        filepath = 'src/app_states/' + filename + '.py'
+        if not(os.path.exists(filepath)):
+            with open(filepath, 'w') as f:
+                settings = {}
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+        with open(filepath, 'r') as f:
+            return json.loads(f.read())
+        # module = getattr(__import__('app_states', fromlist=[filename]), filename)
+        # return module.settings
 
-    def save_state(self, state):
-        #TODO: Save app state to local file system
-        pass
+    def save_settings(self):
+        # Save app settings to local file system
+        filename = self.name.lower() + '_state'
+        filepath = 'src/app_states/' + filename + '.py'
+        with open(filepath, 'w') as f:
+            f.write(json.dumps(self.settings, indent=4, sort_keys=True))
 
     def app_instruction(self, instruction):
 

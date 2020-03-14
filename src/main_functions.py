@@ -4,6 +4,7 @@ from arduino import Arduino
 from cell import Cell
 
 # apps:
+from riddles import Riddles
 from learn import Learn
 from tutor import Tutor
 
@@ -31,7 +32,9 @@ def open_app(app_name, cells, audio, arduino):
     current_app = None
 
     app_name = app_name.replace(" ", "")
-    if app_name == 'learn':
+    if app_name == 'riddles':
+        current_app = Riddles("Riddles",cells,audio,arduino)
+    elif app_name == 'learn':
         current_app = Learn("Learn",cells,audio,arduino)
     elif app_name == 'tutor':
         current_app = Tutor("Tutor",cells,audio,arduino)

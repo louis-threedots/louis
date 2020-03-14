@@ -1,5 +1,3 @@
-import string
-import time
 from app import App
 from characters import *
 
