@@ -92,7 +92,8 @@ class Tutor(App):
 
         if score_percentage != 100:
             self.audio.speak("Would you like to go through letters you got wrong?")
-            if self.await_response(["yes","no"]):
+            reply = self.await_response(["yes","no"])
+            if reply == 'yes':
                 self.audio.speak("Okay, let's go through the characters you answered wrong. You can move on to the next character by saying next.")
                 for c in bad_pile:
                     self.print_character_all_cells(c)
@@ -103,7 +104,8 @@ class Tutor(App):
             self.audio.speak("Well done!")
 
         self.audio.speak("Do you want to take another test?")
-        if self.await_response(["yes","no"]):
+        reply = self.await_response(["yes","no"])
+        if reply == 'yes':
             self.run_test()
 
         self.on_quit()

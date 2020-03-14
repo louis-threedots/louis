@@ -159,7 +159,7 @@ class Cell:
         return self.arduino.ping(self.index)
 
     def wait_for_button_press(self):
-        if self.arduino.get_pressed_button(index=self.index) != self.index:
+        if self.arduino.get_pressed_button() != self.index:
             self.wait_for_button_press()
         return True
         #TODO return False after timeout

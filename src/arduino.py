@@ -56,14 +56,14 @@ class Arduino:
             else:
                 self.ser.write(bytearray([self.cell_offset+cell_index,103]+self.convert_to_base((-1)*rel_angle)))
 
-    def get_pressed_button(self, index=1):
+    def get_pressed_button(self):
         if self.main_cell == 'ev3':
             while not self.button.is_pressed:
                 pass
-            return index
+            return 1
         elif self.main_cell == 'comp':
-            x = str(input("> Press enter to simulate button press"))
-            return index
+            x = int(input("> Enter cell index to imitate button press: "))
+            return x
         else:
             #TODO: Add timeout
             self.ser.read(self.ser.inWaiting())
