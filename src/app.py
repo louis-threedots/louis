@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import os
 import json
+from characters import indicator_dict
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -29,18 +30,14 @@ class App(ABC):
         main_menu(self.arduino, self.cells, self.audio)
 
     def confirm_quit(self):
-
         self.audio.speak("Would you like to quit this application?")
-        answer = self.audio.recognize_speech()["transcription"]
-
+        #answer = self.audio.recognize_speech()["transcription"]
+        response = self.audio.await_response(["yes","no"])
         # take answer from the user
-        if answer.find('yes') != -1:
+        if response == "yes":
             self.on_quit()
-        elif answer.find('no') != -1:
+        elif response == "no":
             self.audio.speak("You're returning to the app.")
-        else:
-            self.audio.speak("I did not understand.")
-            self.confirm_quit() # ask the question again
 
     def load_settings(self):
         # Rehydrate app settings from local file system
@@ -63,25 +60,12 @@ class App(ABC):
             f.write(json.dumps(self.settings, indent=4, sort_keys=True))
 
     def app_instruction(self, instruction):
-
         self.audio.speak("Would you like to listen to an instruction for this application?")
-        answer = self.audio.recognize_speech()["transcription"]
-
-        # take answer from the user
-        if answer.find('yes') != -1:
+        response = self.audio.await_response(['yes','no'])
+        if response == "yes":
             self.audio.speak("Welcome to " + self.name + ". " + instruction)
-        elif answer.find('no') != -1:
+        elif response == "no":
             self.audio.speak("skipping instruction")
-        else:
-            self.audio.speak("I did not understand.")
-            self.app_instruction(instruction) # ask the question again
-
-    def wait_for_audio(self, word):
-        word_pos = -1
-        while (word_pos == -1):
-            print("Listening ...")
-            word_listener = self.audio.recognize_speech(app=self)["transcription"]
-            word_pos = word_listener.find(word)
 
     def get_pressed_button(self):
         # Returns the index of the pressed cell button
@@ -100,14 +84,24 @@ class App(ABC):
         self.wait_for_all_cells_finished()
 
     def print_text(self, text):
-        to_print = []
-        for i in range(0,len(text)):
-            to_print.append(text[i])
+        prepared_text = []
+        for letter in text:
+            if letter not in indicator_dict:
+                if letter.isupper():
+                    prepared_text.append('CAPITAL')
+                    letter = letter.lower()
+                elif letter.isdigit():
+                    prepared_text.append('NUMBER')
+            prepared_text.append(letter)
 
-            if len(to_print) == len(self.cells) or i == len(text)-1 :
+        to_print = []
+        for i in range(0,len(prepared_text)):
+            to_print.append(prepared_text[i])
+
+            if len(to_print) == len(self.cells) or i == len(prepared_text)-1 :
                 # Letters need to be passed in reverse in order to be processed in parallel
                 for j in range(len(to_print)-1,-1,-1):
-                    self.cells[j].print_character(to_print(j))
+                    self.cells[j].print_character(to_print[j])
                 # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
                 self.cells[-1].wait_for_button_press()
                 to_print = []
