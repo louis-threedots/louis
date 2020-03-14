@@ -31,8 +31,7 @@ class App(ABC):
 
     def confirm_quit(self):
         self.audio.speak("Would you like to quit this application?")
-        #answer = self.audio.recognize_speech()["transcription"]
-        response = self.audio.await_response(["yes","no"])
+        response = self.await_response(["yes","no"])
         # take answer from the user
         if response == "yes":
             self.on_quit()
@@ -61,7 +60,7 @@ class App(ABC):
 
     def app_instruction(self, instruction):
         self.audio.speak("Would you like to listen to an instruction for this application?")
-        response = self.audio.await_response(['yes','no'])
+        response = self.await_response(['yes','no'])
         if response == "yes":
             self.audio.speak("Welcome to " + self.name + ". " + instruction)
         elif response == "no":
@@ -105,3 +104,31 @@ class App(ABC):
                 # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
                 self.cells[-1].wait_for_button_press()
                 to_print = []
+
+    def await_response(self, desired_responses = []):
+        answer = self.audio.recognize_speech()["transcription"]
+        invalid = True
+
+        if answer.find("options") != -1:
+            desired_response_string = str(desired_responses).strip('[]')
+            self.audio.speak("Your options are: " + desired_response_string + '.')
+            invalid = False
+        # quit / exit command listener
+        elif answer.find('quit') != -1 or answer.find('exit') != -1:
+            self.confirm_quit()
+            invalid = False
+
+        if len(desired_responses) == 0:
+            return answer
+        else:
+            for d_r in desired_responses:
+                if answer.find(d_r) != -1:
+                    response = d_r
+                    print("You said: " + response)
+                    return response
+
+        if invalid:
+            self.audio.speak("Invalid option, please try again.")
+
+        response = self.await_response(desired_responses)
+        return response

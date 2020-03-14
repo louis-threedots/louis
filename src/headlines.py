@@ -20,7 +20,7 @@ class Headlines(App):
     def show_headlines(self,category, ptr):
 
         article_ptr = ptr
-        options = ["next","back","more","again","home","quit"]
+        options = ["next","back","more","again","home"]
         #instructions = "Say \"next\" or \"back\" to go to the next or the previous article, \"more\" if you would like to read more, \"again\" to read the headline again and \"home\" to return to the beginning."
         #Get RSS feed given catagory
         feed = feedparser.parse("http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/"+category+"/rss.xml")
@@ -32,10 +32,8 @@ class Headlines(App):
             if show:
                 self.print_text(article_list[article_ptr].title)
                 #print(article_list[article_ptr].title)
-            response = self.audio.await_response(options)
-            if response == "quit":
-                self.confirm_quit()
-            elif response == "next":
+            response = self.await_response(options)
+            if response == "next":
                 if article_ptr + 1 > len(article_list):
                     self.audio.speak("You have reached the end of the articles in this category.")
                     show = False
@@ -64,7 +62,6 @@ class Headlines(App):
     def get_category_response(self, prompt, extended_prompt):
         #First time it is called, it shows the extended_prompt
         options = [c for c in self.categories]
-        options.append("quit")
         first_attempt = True
 
         if first_attempt:
@@ -73,9 +70,7 @@ class Headlines(App):
         else:
             self.audio.speak(prompt)
 
-        response = self.audio.await_response(options)
-        if response == "quit":
-            self.confirm_quit()
+        response = self.await_response(options)
         return response
 
     def main(self):

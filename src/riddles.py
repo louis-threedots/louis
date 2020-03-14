@@ -5,7 +5,7 @@ class Riddles(App):
 
     def on_start(self):
         self.riddles = self.get_riddles()
-        self.app_instruction("This app will tell you riddles. The answer will be given in braille. It will pick up where you left off.")
+        self.app_instruction("This app will tell you riddles. The answer will be given in braille. It will pick up where you left off. You can browse by saying next and previous.")
         self.next_riddle()
 
     def next_riddle(self):
@@ -19,13 +19,12 @@ class Riddles(App):
             + riddle['question']
         )
 
-        # self.print_text(riddle['answer'])
+        self.print_text(riddle['answer'])
+        self.settings['riddle_idx'] += 1
 
-        response = self.audio.await_response(['next', 'back'])
-        if response == "back":
-            self.settings['riddle_idx'] -= 1
-        elif response == "next":
-            self.settings['riddle_idx'] += 1
+        response = self.await_response(['next', 'previous'])
+        if response == "previous":
+            self.settings['riddle_idx'] -= 2
 
         self.next_riddle()
 
@@ -34,10 +33,6 @@ class Riddles(App):
             {
                 "question": "Who succeeded the first Prime Minister of Great Britain?",
                 "answer": "the second one"
-            },
-            {
-                "question": "Why does my teacher remind me of history?",
-                "answer": "she is always repeating herself"
             },
             {
                 "question": "Where was the Magna Carta signed?",
@@ -66,5 +61,9 @@ class Riddles(App):
             {
                 "question": "Who writes invisible books?",
                 "answer": "a ghost writer"
-            }
+            },
+            {
+                "question": "Why does my teacher remind me of history?",
+                "answer": "she is always repeating herself"
+            },
         ]
