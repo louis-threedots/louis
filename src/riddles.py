@@ -29,6 +29,7 @@ class Riddles(App):
         self.next_riddle()
 
     def get_riddles(self):
+        # SOURCE: https://www.royalblind.org/sites/www.royalblind.org/files/Braille%20Riddles%202.pdf
         return [
             {
                 "question": "Who succeeded the first Prime Minister of Great Britain?",
