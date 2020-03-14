@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-from cell import *
 
 from main_functions import discover
 arduino, cells = discover()

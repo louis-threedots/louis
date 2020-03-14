@@ -6,6 +6,7 @@ from cell import Cell
 # apps:
 from learn import Learn
 from tutor import Tutor
+from headlines import Headlines
 
 def discover():
     print("Louis has started. Running cell discovery ...")
@@ -35,6 +36,8 @@ def open_app(app_name, cells, audio, arduino):
         current_app = Learn("Learn",cells,audio,arduino)
     elif app_name == 'tutor':
         current_app = Tutor("Tutor",cells,audio,arduino)
+    elif app_name == 'headlines':
+        current_app = Headlines("Headlines",cells,audio,arduino)
 
     if current_app is not None:
         audio.speak("Opening the application " + app_name)

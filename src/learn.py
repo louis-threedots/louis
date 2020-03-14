@@ -45,7 +45,7 @@ class Learn(App):
         for c in learn_chars:
             self.print_character_all_cells(c)
             self.audio.speak(audio_announcement + ' ' + character_dict[c]['pronunciation'])
-            self.wait_for_audio("next")
+            self.audio.await_response(["next"])
 
         self.audio.speak("That were all the characters. Would you like to learn another category?")
         if self.audio.recognize_speech()["transcription"].find('yes') != -1:

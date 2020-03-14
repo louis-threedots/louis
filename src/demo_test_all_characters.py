@@ -1,7 +1,6 @@
 #! /usr/bin/python3
 import time
 start = time.time()
-from cell import *
 
 # TO RUN ON EV3:
 #1

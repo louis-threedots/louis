@@ -2,7 +2,6 @@
 import time
 start = time.time()
 import random
-from cell import *
 
 from main_functions import discover
 arduino, cells = discover()
