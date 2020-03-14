@@ -52,7 +52,7 @@ class Headlines(App):
                     show = True
 
             elif response == "more":
-                self.app.print_text(article_list[article_ptr].summary)
+                self.print_text(article_list[article_ptr].summary)
                 #print(article_list[article_ptr].summary)
                 show = False
 

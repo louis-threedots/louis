@@ -9,7 +9,7 @@ except:
     print('no speech recognition import')
 
 input_speech = False
-output_audio = False
+output_audio = True
 
 class Audio():
 
@@ -70,7 +70,7 @@ class Audio():
         for d_r in desired_responses:
             if answer.find(d_r) != -1:
                 response = d_r
-                self.speak("You said: " + response)
+                print("You said: " + response)
                 return response
         if invalid:
             self.speak("Invalid option, please try again.")
