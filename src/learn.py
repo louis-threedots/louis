@@ -1,5 +1,3 @@
-import string
-import time
 from app import App
 from characters import *
 
@@ -16,7 +14,7 @@ class Learn(App):
             The alphabet, punctuation, digits, special indicators or contractions?
         """)
 
-        reply = self.audio.recognize_speech(app=self)["transcription"]
+        reply = self.await_response(["alphabet", "punctuation", "digits", "contractions", "indicators"])
         if "alphabet" in reply:
             self.audio.speak("Let's learn the lowercase alphabet.")
             learn_chars = alphabet_dict
@@ -37,18 +35,14 @@ class Learn(App):
             self.audio.speak("Let's learn special indicators.")
             learn_chars = indicator_dict
             audio_announcement = "This announces a"
-        else:
-            self.audio.speak("I did not understand.")
-            self.learn_category() # ask the question again
-            return
 
         for c in learn_chars:
             self.print_character_all_cells(c)
             self.audio.speak(audio_announcement + ' ' + character_dict[c]['pronunciation'])
-            self.audio.await_response(["next"])
+            self.await_response(["next"])
 
         self.audio.speak("That were all the characters. Would you like to learn another category?")
-        if self.audio.recognize_speech()["transcription"].find('yes') != -1:
+        if self.await_response(["yes","no"]):
             self.learn_category()
 
         self.on_quit()

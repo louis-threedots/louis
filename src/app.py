@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import os
+import json
 from characters import indicator_dict
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
@@ -9,6 +11,7 @@ class App(ABC):
         self.audio = audio
         self.arduino = arduino
         self.name = name
+        self.settings = self.load_settings()
 
     @abstractmethod
     def on_start(self):
@@ -18,6 +21,7 @@ class App(ABC):
     def on_quit(self):
         # Actions that an app wants to perform when quitting the app
         self.audio.speak("The app will now close itself. Goodbye.")
+        self.save_settings()
         for cell in reversed(self.cells):
             cell.rotate_to_rel_angle(720 - cell.motor_position)
             cell.set_to_default()
@@ -27,25 +31,36 @@ class App(ABC):
 
     def confirm_quit(self):
         self.audio.speak("Would you like to quit this application?")
-        #answer = self.audio.recognize_speech()["transcription"]
-        response = self.audio.await_response(["yes","no"])
+        response = self.await_response(["yes","no"])
         # take answer from the user
         if response == "yes":
             self.on_quit()
         elif response == "no":
             self.audio.speak("You're returning to the app.")
 
-    def load_state(self, state):
-        #TODO: Rehydrate app state from local file system
-        pass
+    def load_settings(self):
+        # Rehydrate app settings from local file system
+        filename = self.name.lower() + '_state'
+        filepath = 'src/app_states/' + filename + '.py'
+        if not(os.path.exists(filepath)):
+            with open(filepath, 'w') as f:
+                settings = {}
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+        with open(filepath, 'r') as f:
+            return json.loads(f.read())
+        # module = getattr(__import__('app_states', fromlist=[filename]), filename)
+        # return module.settings
 
-    def save_state(self, state):
-        #TODO: Save app state to local file system
-        pass
+    def save_settings(self):
+        # Save app settings to local file system
+        filename = self.name.lower() + '_state'
+        filepath = 'src/app_states/' + filename + '.py'
+        with open(filepath, 'w') as f:
+            f.write(json.dumps(self.settings, indent=4, sort_keys=True))
 
     def app_instruction(self, instruction):
         self.audio.speak("Would you like to listen to an instruction for this application?")
-        response = self.audio.await_response(['yes','no'])
+        response = self.await_response(['yes','no'])
         if response == "yes":
             self.audio.speak("Welcome to " + self.name + ". " + instruction)
         elif response == "no":
@@ -89,3 +104,31 @@ class App(ABC):
                 # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
                 self.cells[-1].wait_for_button_press()
                 to_print = []
+
+    def await_response(self, desired_responses = []):
+        answer = self.audio.recognize_speech()["transcription"]
+        invalid = True
+
+        if answer.find("options") != -1:
+            desired_response_string = str(desired_responses).strip('[]')
+            self.audio.speak("Your options are: " + desired_response_string + '.')
+            invalid = False
+        # quit / exit command listener
+        elif answer.find('quit') != -1 or answer.find('exit') != -1:
+            self.confirm_quit()
+            invalid = False
+
+        if len(desired_responses) == 0:
+            return answer
+        else:
+            for d_r in desired_responses:
+                if answer.find(d_r) != -1:
+                    response = d_r
+                    print("You said: " + response)
+                    return response
+
+        if invalid:
+            self.audio.speak("Invalid option, please try again.")
+
+        response = self.await_response(desired_responses)
+        return response

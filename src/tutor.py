@@ -1,9 +1,6 @@
-from audio import Audio
 from characters import *
 import random
-import time
 from app import App
-import string
 
 class Tutor(App):
 
@@ -25,7 +22,7 @@ class Tutor(App):
         bad_pile = []
 
         self.audio.speak("How would you like the length of the test to be? Please choose one of the following: short, medium or full.")
-        test_length_reply = self.audio.recognize_speech(app=self)["transcription"]
+        test_length_reply = self.await_response(["short", "medium", "full"])
 
         if "short" in test_length_reply:
             test_length = "short"
@@ -52,7 +49,7 @@ class Tutor(App):
             self.audio.speak('What letter is this? This is ' + chartypes_output[chartype] + '.')
 
             while chances > 0:
-                answer = self.audio.recognize_speech(app=self)["transcription"]
+                answer = self.await_response()
                 if answer == '': # speech recognizer returned error
                     self.audio.speak("I didn't quite get that. Please respond again.")
                     continue
@@ -95,18 +92,18 @@ class Tutor(App):
 
         if score_percentage != 100:
             self.audio.speak("Would you like to go through letters you got wrong?")
-            if self.audio.recognize_speech(app=self)["transcription"].find('yes') != -1:
+            if self.await_response(["yes","no"]):
                 self.audio.speak("Okay, let's go through the characters you answered wrong. You can move on to the next character by saying next.")
                 for c in bad_pile:
                     self.print_character_all_cells(c)
                     self.audio.speak("This is " + character_dict[c]['pronunciation'])
-                    self.wait_for_audio("next")
+                    self.await_response(["next"])
                 self.audio.speak("That were all the characters you answered wrong.")
         else:
             self.audio.speak("Well done!")
 
         self.audio.speak("Do you want to take another test?")
-        if self.audio.recognize_speech()["transcription"].find('yes') != -1:
+        if self.await_response(["yes","no"]):
             self.run_test()
 
         self.on_quit()
