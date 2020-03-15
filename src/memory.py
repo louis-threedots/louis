@@ -59,6 +59,7 @@ class Memory(App):
             return False
 
     def next_turn(self, player):
+        self.print_cells_to_terminal()
         cell_idx1, cell_idx2 = self.have_turn()
         is_match = self.check_for_match(cell_idx1, cell_idx2, player)
         self.check_game_done(player)
@@ -67,8 +68,8 @@ class Memory(App):
         next_player = player
 
         if not is_match:
-            self.cells[cell_idx1 - 1].print_character(' ') # flip back to face-down
-            self.cells[cell_idx2 - 1].print_character(' ') # flip back to face-down
+            self.cells[cell_idx1 - 1].reset(to='space') # flip back to face-down
+            self.cells[cell_idx2 - 1].reset(to='space') # flip back to face-down
             if player == 1:
                 next_player = 2
             elif player == 2:
@@ -95,7 +96,7 @@ class Memory(App):
             self.audio.speak("Do you want to play another game?")
             reply = self.await_response(["yes","no"])
             if reply == 'yes':
-                self.print_character_all_cells(' ')
+                self.reset_cells(to='space')
                 self.play_memory()
 
             self.on_quit()
@@ -108,6 +109,7 @@ class Memory(App):
         c = self.field[cell_idx - 1]
         self.cells[cell_idx - 1].print_character(c)
         self.audio.speak("This is cell " + str(cell_idx))
+        self.print_cells_to_terminal()
         return cell_idx
 
     def initialise_field(self):

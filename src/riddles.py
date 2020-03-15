@@ -24,8 +24,8 @@ class Riddles(App):
         response = self.await_response(['next', 'previous', 'again'])
         if response == "previous":
             if self.settings['riddle_idx'] - 2 < 0:
-                self.audio.speak("There are no previous riddles. We will instead tell you the current riddle again.")
-                self.settings['riddle_idx'] = 0
+                self.audio.speak("There are no previous riddles. We will instead tell you the last riddle in the library.")
+                self.settings['riddle_idx'] = len(self.settings['riddle_idx']) - 1
             else:
                 self.settings['riddle_idx'] -= 2
         elif response == 'again':

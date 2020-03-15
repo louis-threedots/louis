@@ -16,6 +16,14 @@ class Cell:
             self.motor_position = 0
             self.big_position = 0
             self.small_position = 0
+            self.character = ' '
+
+    def reset(self, to='zero'):
+        if to == 'space':
+            self.print_character(' ')
+        else:
+            self.rotate_to_rel_angle(720 - self.motor_position)
+            self.set_to_default()
 
     def get_from_pos_to_catch(self, direction):
         if direction == 'clockwise':
@@ -121,13 +129,7 @@ class Cell:
             if abs(small_angle) > self.MARGIN:
                 self.rotate_small_to_angle(small_angle, rotate=rotate)
 
-            print("\n :) !!Printed letter:", letter)
-            dots = characters.character_dict[letter]['dots']
-            dots_print = ['.', 'o']
-            print(dots_print[dots[0]], dots_print[dots[3]])
-            print(dots_print[dots[1]], dots_print[dots[4]])
-            print(dots_print[dots[2]], dots_print[dots[5]])
-            print("")
+            self.character = letter
 
             return big_angle, small_angle
 
