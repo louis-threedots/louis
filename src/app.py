@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import os
 import json
-from characters import indicator_dict
+from characters import indicator_dict, character_dict
 
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
@@ -11,6 +11,9 @@ class App(ABC):
         self.audio = audio
         self.arduino = arduino
         self.name = name
+        # settings
+        filename = self.name.lower() + '_state'
+        self.filepath = os.path.join(os.path.dirname(__file__), 'app_states/' + filename + '.py')
         self.settings = self.load_settings()
 
     @abstractmethod
@@ -22,9 +25,7 @@ class App(ABC):
         # Actions that an app wants to perform when quitting the app
         self.audio.speak("The app will now close itself. Goodbye.")
         self.save_settings()
-        for cell in reversed(self.cells):
-            cell.rotate_to_rel_angle(720 - cell.motor_position)
-            cell.set_to_default()
+        self.reset_cells()
         # return to main thread
         from main_functions import main_menu
         main_menu(self.arduino, self.cells, self.audio)
@@ -38,24 +39,24 @@ class App(ABC):
         elif response == "no":
             self.audio.speak("You're returning to the app.")
 
+    def reset_cells(self, to='zero'):
+        for cell in reversed(self.cells):
+            cell.reset(to=to)
+
     def load_settings(self):
         # Rehydrate app settings from local file system
-        filename = self.name.lower() + '_state'
-        filepath = 'src/app_states/' + filename + '.py'
-        if not(os.path.exists(filepath)):
-            with open(filepath, 'w') as f:
+        if not(os.path.exists(self.filepath)):
+            with open(self.filepath, 'w') as f:
                 settings = {}
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
-        with open(filepath, 'r') as f:
+        with open(self.filepath, 'r') as f:
             return json.loads(f.read())
         # module = getattr(__import__('app_states', fromlist=[filename]), filename)
         # return module.settings
 
     def save_settings(self):
         # Save app settings to local file system
-        filename = self.name.lower() + '_state'
-        filepath = 'src/app_states/' + filename + '.py'
-        with open(filepath, 'w') as f:
+        with open(self.filepath, 'w') as f:
             f.write(json.dumps(self.settings, indent=4, sort_keys=True))
 
     def app_instruction(self, instruction):
@@ -97,13 +98,34 @@ class App(ABC):
         for i in range(0,len(prepared_text)):
             to_print.append(prepared_text[i])
 
+            # TODO fix bug where the last characters stay the same as previous pagination when at end of sentence (doesn't go to zero)
             if len(to_print) == len(self.cells) or i == len(prepared_text)-1 :
                 # Letters need to be passed in reverse in order to be processed in parallel
                 for j in range(len(to_print)-1,-1,-1):
                     self.cells[j].print_character(to_print[j])
+
+                self.print_cells_to_terminal()
                 # Wait for pagination. Exiting turns out to be more difficult since wait_for_button_press blocks the execution.
                 self.cells[-1].wait_for_button_press()
                 to_print = []
+
+    def print_cells_to_terminal(self):
+        dots_print = ['.', 'o']
+        top_row, middle_row, bottom_row, character_row = '', '', '', ''
+
+        for cell in self.cells:
+            extra_padding = len(cell.character) - 1
+            dots = character_dict[cell.character]['dots']
+            character_row = character_row + '  ' + str(cell.character) + '  '
+
+            top_row = top_row + '|' + dots_print[dots[0]] + ' ' + dots_print[dots[3]] + '|' + (' ' * extra_padding)
+            middle_row = middle_row + '|' + dots_print[dots[1]] + ' ' + dots_print[dots[4]] + '|' + (' ' * extra_padding)
+            bottom_row = bottom_row + '|' + dots_print[dots[2]] + ' ' + dots_print[dots[5]] + '|' + (' ' * extra_padding)
+
+        print(top_row)
+        print(middle_row)
+        print(bottom_row)
+        print(character_row)
 
     def await_response(self, desired_responses = []):
         answer = self.audio.recognize_speech()["transcription"]

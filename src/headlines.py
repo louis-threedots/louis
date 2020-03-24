@@ -31,7 +31,6 @@ class Headlines(App):
         while True:
             if show:
                 self.print_text(article_list[article_ptr].title)
-                #print(article_list[article_ptr].title)
             response = self.await_response(options)
             if response == "next":
                 if article_ptr + 1 > len(article_list):

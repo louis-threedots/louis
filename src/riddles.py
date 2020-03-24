@@ -1,11 +1,10 @@
 from app import App
-from characters import *
 
 class Riddles(App):
 
     def on_start(self):
         self.riddles = self.get_riddles()
-        self.app_instruction("This app will tell you riddles. The answer will be given in braille. It will pick up where you left off. You can browse by saying next and previous.")
+        self.app_instruction("This app will tell you riddles. The answer will be given in braille. It will pick up where you left off. You can browse by saying next, previous and again.")
         self.next_riddle()
 
     def next_riddle(self):
@@ -22,9 +21,15 @@ class Riddles(App):
         self.print_text(riddle['answer'])
         self.settings['riddle_idx'] += 1
 
-        response = self.await_response(['next', 'previous'])
+        response = self.await_response(['next', 'previous', 'again'])
         if response == "previous":
-            self.settings['riddle_idx'] -= 2
+            if self.settings['riddle_idx'] - 2 < 0:
+                self.audio.speak("There are no previous riddles. We will instead tell you the last riddle in the library.")
+                self.settings['riddle_idx'] = len(self.riddles) - 1
+            else:
+                self.settings['riddle_idx'] -= 2
+        elif response == 'again':
+            self.settings['riddle_idx'] -= 1
 
         self.next_riddle()
 

@@ -8,6 +8,7 @@ from riddles import Riddles
 from learn import Learn
 from tutor import Tutor
 from headlines import Headlines
+from memory import Memory
 
 def discover():
     print("Louis has started. Running cell discovery ...")
@@ -41,6 +42,8 @@ def open_app(app_name, cells, audio, arduino):
         current_app = Tutor("Tutor",cells,audio,arduino)
     elif app_name == 'headlines':
         current_app = Headlines("Headlines",cells,audio,arduino)
+    elif app_name == 'memory':
+        current_app = Memory("Memory",cells,audio,arduino)
 
     if current_app is not None:
         audio.speak("Opening the application " + app_name)

@@ -42,7 +42,8 @@ class Learn(App):
             self.await_response(["next"])
 
         self.audio.speak("That were all the characters. Would you like to learn another category?")
-        if self.await_response(["yes","no"]):
+        reply = self.await_response(["yes","no"])
+        if reply == 'yes':
             self.learn_category()
 
         self.on_quit()
