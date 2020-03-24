@@ -14,10 +14,21 @@ class Memory(App):
             self.on_quit()
 
         self.app_instruction("""
-            TODO: write instructions
-            when pressing button -> cell will show character.
-            next button press is the next 'card' you 'flip'
-            say next to go to the next turn
+            This is the braille version of the traditional Memory card game.
+            You can play it with one or two players. The Memory cards are the cells,
+            each corresponding to a braille alphabet character.
+            The whole set of cards consists of random, distinct pairs of characters.
+            The app first mixes up the cards and assigns them to all the cells.
+            Then, turn over any two cards by pressing the button on a cell.
+            That cell will go from a blank output to rendering the associated character.
+            If the two cards match, you score a point and get another turn.
+            If they don't match, you and your opponent get time to inspect them and can move on to the next turn by saying 'next'.
+            The output will then return to blank again, so remember what was on each card and where it was.
+            The game is over when all the cards have been matched.
+
+            In solo mode, the number of turns is recorded, so that you
+            can attempt to find all pairs in as little turns as possible.
+            When playing together, the app will keep track of the score.
         """)
         self.play_memory()
 

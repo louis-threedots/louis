@@ -11,6 +11,9 @@ class App(ABC):
         self.audio = audio
         self.arduino = arduino
         self.name = name
+        # settings
+        filename = self.name.lower() + '_state'
+        self.filepath = os.path.join(os.path.dirname(__file__), 'app_states/' + filename + '.py')
         self.settings = self.load_settings()
 
     @abstractmethod
@@ -42,22 +45,18 @@ class App(ABC):
 
     def load_settings(self):
         # Rehydrate app settings from local file system
-        filename = self.name.lower() + '_state'
-        filepath = 'src/app_states/' + filename + '.py'
-        if not(os.path.exists(filepath)):
-            with open(filepath, 'w') as f:
+        if not(os.path.exists(self.filepath)):
+            with open(self.filepath, 'w') as f:
                 settings = {}
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
-        with open(filepath, 'r') as f:
+        with open(self.filepath, 'r') as f:
             return json.loads(f.read())
         # module = getattr(__import__('app_states', fromlist=[filename]), filename)
         # return module.settings
 
     def save_settings(self):
         # Save app settings to local file system
-        filename = self.name.lower() + '_state'
-        filepath = 'src/app_states/' + filename + '.py'
-        with open(filepath, 'w') as f:
+        with open(self.filepath, 'w') as f:
             f.write(json.dumps(self.settings, indent=4, sort_keys=True))
 
     def app_instruction(self, instruction):
