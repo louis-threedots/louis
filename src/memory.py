@@ -6,12 +6,13 @@ class Memory(App):
 
     def on_start(self):
         num_cells = len(self.cells)
-        if num_cells < 4 and num_cells % 2 != 0:
+        if num_cells < 4 or num_cells % 2 != 0:
             self.audio.speak("""
-                This game is meant to be played with an even number of modules, at least 4.
-                Right now there are """ + str(num_cells) + """ modules connected.
+                This game is meant to be played with an even number of cells, at least 4.
+                Right now there are """ + str(num_cells) + """ cells connected.
             """)
             self.on_quit()
+        self.dict_idx = str(num_cells)
 
         self.app_instruction("""
             This is the braille version of the traditional Memory card game.
@@ -92,6 +93,11 @@ class Memory(App):
         if sum(self.score) == int(len(self.field) / 2):
             if player == 0:
                 self.audio.speak("You have found all pairs in " + str(self.num_turns) + " turns.")
+                if not self.dict_idx in self.settings['high_scores'] or self.settings['high_scores'][self.dict_idx] > self.num_turns:
+                    self.audio.speak("This is a new high score!")
+                    self.settings['high_scores'][self.dict_idx] = self.num_turns
+                else:
+                    self.audio.speak("The current high score is " + str(self.settings['high_scores'][self.dict_idx]) + ".")
             else:
                 self.audio.speak("""
                     All pairs have been found. Player 1 has a score of """ + str(self.score[1]) + """

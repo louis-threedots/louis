@@ -48,7 +48,7 @@ class App(ABC):
         if not(os.path.exists(self.filepath)):
             with open(self.filepath, 'w') as f:
                 settings = {}
-                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.write(json.dumps(settings, indent=4))
         with open(self.filepath, 'r') as f:
             return json.loads(f.read())
         # module = getattr(__import__('app_states', fromlist=[filename]), filename)
@@ -57,7 +57,7 @@ class App(ABC):
     def save_settings(self):
         # Save app settings to local file system
         with open(self.filepath, 'w') as f:
-            f.write(json.dumps(self.settings, indent=4, sort_keys=True))
+            f.write(json.dumps(self.settings, indent=4))
 
     def app_instruction(self, instruction):
         self.audio.speak("Would you like to listen to an instruction for this application?")
