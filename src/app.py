@@ -101,6 +101,8 @@ class App(ABC):
             # TODO fix bug where the last characters stay the same as previous pagination when at end of sentence (doesn't go to zero)
             if len(to_print) == len(self.cells) or i == len(prepared_text)-1 :
                 # Letters need to be passed in reverse in order to be processed in parallel
+                padding = len(self.cells) - len(to_print) 
+                to_print = to_print + list(" " * padding)
                 for j in range(len(to_print)-1,-1,-1):
                     self.cells[j].print_character(to_print[j])
 
