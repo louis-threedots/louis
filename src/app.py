@@ -89,11 +89,21 @@ class App(ABC):
             if letter not in indicator_dict:
                 if i>=1 and letter.isalpha() and text[i-1].isdigit():
                     prepared_text.append('LETTER')
+                
                 if letter.isupper():
                     prepared_text.append('CAPITAL')
                     letter = letter.lower()
                 elif letter.isdigit():
-                    prepared_text.append('NUMBER')
+                    insert_letter_ind = True
+                    # indicator not necessary when previous char is digit
+                    if i>=1 and text[i-1].isdigit():
+                        insert_letter_ind = False
+                    # indicator not necessary when part of number (e.g. 1,496.2)
+                    if i>=2 and text[i-2].isdigit() and (text[i-1] == '.' or text[i-1] == ','):
+                        insert_letter_ind = False
+                    if insert_letter_ind:
+                        prepared_text.append('NUMBER')
+            
             prepared_text.append(letter)
 
         to_print = []
