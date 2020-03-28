@@ -85,8 +85,10 @@ class App(ABC):
 
     def print_text(self, text):
         prepared_text = []
-        for letter in text:
+        for i,letter in enumerate(text):
             if letter not in indicator_dict:
+                if i>=1 and letter.isalpha() and text[i-1].isdigit():
+                    prepared_text.append('LETTER')
                 if letter.isupper():
                     prepared_text.append('CAPITAL')
                     letter = letter.lower()
