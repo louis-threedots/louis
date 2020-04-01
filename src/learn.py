@@ -4,15 +4,15 @@ from characters import *
 class Learn(App):
 
     def on_start(self):
-        # instruction when app started, skip when the user says skip
-        self.app_instruction("Here you will learn the alphabet. You can move on to the next character by saying next.")
+        self.instruction = """
+            Welcome to Learn.
+            Here you will learn the alphabet.
+            You can move on to the next character by saying next.
+        """
         self.learn_category()
 
     def learn_category(self):
-        self.audio.speak("""
-            Which of the following categories would you like to learn?
-            The alphabet, punctuation, digits, special indicators or contractions?
-        """)
+        self.audio.speak("Which of the following categories would you like to learn? The alphabet, punctuation, digits, special indicators or contractions?")
 
         reply = self.await_response(["alphabet", "punctuation", "digits", "contractions", "indicators"])
         if "alphabet" in reply:
@@ -38,7 +38,8 @@ class Learn(App):
 
         for c in learn_chars:
             self.print_character_all_cells(c)
-            self.audio.speak(audio_announcement + ' ' + character_dict[c]['pronunciation'])
+            self.audio.speak(audio_announcement)
+            self.audio.speak(character_dict[c]['pronunciation'])
             self.await_response(["next"])
 
         self.audio.speak("That were all the characters. Would you like to learn another category?")

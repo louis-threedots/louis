@@ -25,7 +25,7 @@ class Arduino:
         if self.main_cell == 'ev3':
             return 1
         elif self.main_cell == 'comp':
-            return int(input("number of cells? "))
+            return int(input("How many cells would you like to work with? "))
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )
@@ -62,7 +62,7 @@ class Arduino:
                 pass
             return 1
         elif self.main_cell == 'comp':
-            x = int(input("> Enter cell index to imitate button press: "))
+            x = int(input("Enter a cell index to imitate a button press: "))
             return x
         else:
             #TODO: Add timeout
@@ -71,7 +71,6 @@ class Arduino:
             while button_message[1]!= 105:
                 button_message = self.ser.read(4)
             return button_message[3] - self.cell_offset
-
 
     def ping(self, cell_index):
         if self.main_cell == 'ev3':

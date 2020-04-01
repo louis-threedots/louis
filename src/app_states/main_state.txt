@@ -1,0 +1,4 @@
+{
+    "output_audio": false,
+    "input_speech": false
+}

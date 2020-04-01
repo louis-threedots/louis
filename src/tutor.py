@@ -5,15 +5,12 @@ from app import App
 class Tutor(App):
 
     def on_start(self):
-        # todo: to be implemented shortly
-        #self.audio.start_background_listening('stop')
-
-        # instruction when app started, skip when user says skip
-        self.app_instruction("""
+        self.instruction = """
+            Welcome to Tutor.
             The purpose of this application is to test how much you have learnt from Learn. Let's start testing.
             You can answer the question with any word of your choice that starts with the letter you believe to be the correct answer,
             but avoid using quit or exit unless you want to quit the application.
-        """)
+        """
         self.run_test()
 
     def run_test(self):
@@ -46,7 +43,8 @@ class Tutor(App):
                 'indicator': 'a special indicator',
                 'digit': 'a digit'
             }
-            self.audio.speak('What letter is this? This is ' + chartypes_output[chartype] + '.')
+            self.audio.speak('What letter is this? This is:')
+            self.audio.speak(chartypes_output[chartype])
 
             while chances > 0:
                 answer = self.await_response()
@@ -67,7 +65,9 @@ class Tutor(App):
                     correct_answer = character_dict[c]['pronunciation']
 
                 if answer == correct_answer:
-                    self.audio.speak('You correctly answered ' + character_dict[c]['pronunciation'] + '! Moving on to the next question.')
+                    self.audio.speak('You correctly answered:')
+                    self.audio.speak(character_dict[c]['pronunciation'])
+                    self.audio.speak("Moving on to the next question.")
                     good_pile.append(c)
                     break
                 else:
@@ -77,9 +77,15 @@ class Tutor(App):
 
                     chances -= 1
                     if chances > 0:
-                        self.audio.speak("You incorrectly answered " + answer_output + ". You have " + str(chances) + " more chances to respond.")
+                        self.audio.speak("You incorrectly answered:")
+                        self.audio.speak(answer_output)
+                        self.audio.speak("The number of chances you have left is:")
+                        self.audio.speak(str(chances))
                     else:
-                        self.audio.speak("You incorrectly answered " + answer_output + ". You have used all your chances to answer. The correct answer is " + character_dict[c]['pronunciation'])
+                        self.audio.speak("You incorrectly answered:")
+                        self.audio.speak(answer_output)
+                        self.audio.speak("You have used all your chances to answer. The correct answer is:")
+                        self.audio.speak(character_dict[c]['pronunciation'])
                         self.audio.speak("I will save this character for later.")
                         bad_pile.append(c)
                         self.audio.speak("Moving on to the next question.")
@@ -88,7 +94,8 @@ class Tutor(App):
 
     def test_done_instruction(self, bad_pile, good_pile):
         score_percentage = round(len(good_pile) * 100 / len(bad_pile + good_pile), 1)
-        self.audio.speak("Testing is done. You got " + str(score_percentage) + " percent right.")
+        self.audio.speak("Testing is done. Your score out of a hundred is:")
+        self.audio.speak(str(score_percentage))
 
         if score_percentage != 100:
             self.audio.speak("Would you like to go through letters you got wrong?")
@@ -97,7 +104,8 @@ class Tutor(App):
                 self.audio.speak("Okay, let's go through the characters you answered wrong. You can move on to the next character by saying next.")
                 for c in bad_pile:
                     self.print_character_all_cells(c)
-                    self.audio.speak("This is " + character_dict[c]['pronunciation'])
+                    self.audio.speak("This is:")
+                    self.audio.speak(character_dict[c]['pronunciation'])
                     self.await_response(["next"])
                 self.audio.speak("That were all the characters you answered wrong.")
         else:
