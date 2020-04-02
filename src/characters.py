@@ -64,9 +64,21 @@ indicator_dict = {
     'CAPITAL': {'dots': [0, 0, 0, 0, 0, 1], 'pronunciation': 'capital'},
     'LETTER': {'dots': [0, 0, 0, 0, 1, 1], 'pronunciation': 'letter'},
     'NUMBER': {'dots': [0, 0, 1, 1, 1, 1], 'pronunciation': 'number'},
+    'UNKNOWN': {'dots': [1, 1, 1, 1, 1, 1], 'display': 'unknown character'},
 }
 contraction_dict = {
+    'ch': {'dots': [1, 0, 0, 0, 0, 1], 'pronunciation': 'ch'},
+    'sh': {'dots': [1, 0, 0, 1, 0, 1], 'pronunciation': 'sh'},
+    'th': {'dots': [1, 0, 0, 1, 1, 1], 'pronunciation': 'th'},
+    'wh': {'dots': [1, 0, 0, 0, 1, 1], 'pronunciation': 'wh'},
     'ou': {'dots': [1, 1, 0, 0, 1, 1], 'pronunciation': 'ou'},
+    'st': {'dots': [0, 0, 1, 1, 0, 0], 'pronunciation': 'st'},
+    'gh': {'dots': [1, 1, 0, 0, 0, 1], 'pronunciation': 'gh'},
+    'ed': {'dots': [1, 1, 0, 1, 0, 1], 'pronunciation': 'ed'},
+    'er': {'dots': [1, 1, 0, 1, 1, 1], 'pronunciation': 'er'},
+    'ow': {'dots': [0, 1, 0, 1, 0, 1], 'pronunciation': 'ow'},
+    'ar': {'dots': [0, 0, 1, 1, 1, 0], 'pronunciation': 'ar'},
+    'ing': {'dots': [0, 0, 1, 1, 0, 1], 'pronunciation': 'ing'},
 }
 
 character_dict = {**alphabet_dict, **digit_dict, **punctuation_dict, **indicator_dict, **contraction_dict}
@@ -94,7 +106,10 @@ degrees_big = {
 }
 
 def character_degrees(character):
-    list_of_pins = character_dict[character]['dots']
+    if character not in character_dict:
+        list_of_pins = character_dict['UNKNOWN']['dots']
+    else:
+        list_of_pins = character_dict[character]['dots']
     first_three = list_of_pins[:3]
     second_three = list_of_pins[3:]
     first_three_str = ''.join(str(pin) for pin in first_three)

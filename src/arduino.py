@@ -4,8 +4,8 @@ import ev3dev.ev3 as ev3
 
 class Arduino:
 
-    def __init__(self):
-        self.main_cell = 'comp'
+    def __init__(self, main_cell):
+        self.main_cell = main_cell
         try:
             try:
                 self.ser = serial.Serial('/dev/ttyACM0',9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
@@ -25,7 +25,11 @@ class Arduino:
         if self.main_cell == 'ev3':
             return 1
         elif self.main_cell == 'comp':
-            return int(input("How many cells would you like to work with? "))
+            inp = input("How many cells would you like to work with? (integer) ")
+            try:
+                return int(inp)
+            except:
+                return self.discover()
         # [cell number, command, data1, data2]
         # Command 0: Cell Discovery
         #self.ser.write(bytearray([255,0,0,1]), )
@@ -62,8 +66,11 @@ class Arduino:
                 pass
             return 1
         elif self.main_cell == 'comp':
-            x = int(input("Enter a cell index to imitate a button press: "))
-            return x
+            inp = input("Enter a cell index to imitate a button press: (integer) ")
+            try:
+                return int(inp)
+            except:
+                return self.get_pressed_button()
         else:
             #TODO: Add timeout
             self.ser.read(self.ser.inWaiting())

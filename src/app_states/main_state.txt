@@ -1,4 +1,16 @@
 {
     "output_audio": false,
-    "input_speech": false
+    "input_speech": false,
+    "main_cell": "comp",
+    "editable": {
+        "contractions": {
+            "name": "contractions",
+            "description": "You can enable or disable contractions in text applications with the following commands:",
+            "value": false,
+            "values": {
+                "enable contractions": true,
+                "disable contractions": false
+            }
+        }
+    }
 }
