@@ -45,7 +45,7 @@ punctuation_dict = {
     '(': {'dots': [0, 1, 1, 0, 1, 1], 'pronunciation': 'left parenthesis'},
     ')': {'dots': [0, 1, 1, 0, 1, 1], 'pronunciation': 'right parenthesis'},
     '\'': {'dots': [0, 0, 1, 0, 0, 0], 'pronunciation': 'apostrophe'},
-    #'\"': {'dots': [0, 0, 1, 0, 0, 0], 'pronunciation': 'quotation mark'},
+    '\"': {'dots': [0, 0, 1, 0, 0, 0], 'pronunciation': 'quotation mark'},
     ' ': {'dots': [0, 0, 0, 0, 0, 0], 'pronunciation': 'blank space'},
 }
 digit_dict = {

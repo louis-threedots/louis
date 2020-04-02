@@ -48,9 +48,6 @@ class Cell:
                     clockwise_degrees_big = degree_big
                     clockwise_from_big_to_small_degree = (degree_big - degree_small) % 360
                     if clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
-                        # print('clockwise')
-                        # print('from_catch_to_big: (', str(clockwise_degrees_big), '-', str(clockwise_catch_pos), ') % 360 = ', str((clockwise_degrees_big - clockwise_catch_pos) % 360))
-                        # print('from_big_to_small: ', str(clockwise_from_big_to_small_degree))
                         scores_clockwise.append(
                             {
                                 'from_catch_to_big': (clockwise_degrees_big - clockwise_catch_pos) % 360,
@@ -61,22 +58,12 @@ class Cell:
                     anti_clockwise_degrees_big = degree_big
                     anti_clockwise_from_big_to_small_degree = (degree_small - degree_big + self.CATCH_SPACING) % 360
                     if anti_clockwise_from_big_to_small_degree <= self.CATCH_SPACING:
-                        # print('anticlockwise')
-                        # print('from_catch_to_big: (', str(anti_clockwise_catch_pos), '-', str(anti_clockwise_degrees_big), '+', str(self.CATCH_SPACING ), ') % 360 = ', str((anti_clockwise_catch_pos - anti_clockwise_degrees_big + self.CATCH_SPACING) % 360))
-                        # print('from_big_to_small: ', str(anti_clockwise_from_big_to_small_degree))
                         scores_anti_clockwise.append(
                             {
                                 'from_catch_to_big': (anti_clockwise_catch_pos - anti_clockwise_degrees_big + self.CATCH_SPACING) % 360,
                                 'from_big_to_small': anti_clockwise_from_big_to_small_degree
                             }
                         )
-
-            # print('')
-            # print('motor position:', str(self.motor_position))
-            # print('catch positions:')
-            # print(self.catch_pos)
-            # print('clockwise_from_pos_to_catch:', str(clockwise_from_pos_to_catch))
-            # print('anti_clockwise_from_pos_to_catch:', str(anti_clockwise_from_pos_to_catch))
 
             idx_min_score_clockwise = scores_clockwise.index(min(scores_clockwise, key=lambda x: sum(x.values())))
             score_clockwise = scores_clockwise[idx_min_score_clockwise]
@@ -142,12 +129,6 @@ class Cell:
 
     def rotate_small_to_angle(self, x, rotate=True):
             self.rotate_to_rel_angle(x, rotate=rotate)
-
-    def rotate_to_angle(self, x):
-            print("Turning to absolute angle:", x)
-            self.arduino.motor.run_to_abs_pos(position_sp = x, speed_sp = 250, stop_action = 'hold', ramp_up_sp = 0, ramp_down_sp = 150)
-            self.arduino.motor.wait_until('holding')
-            time.sleep(0.4)
 
     def rotate_to_rel_angle(self, x, rotate=True):
             if rotate:

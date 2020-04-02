@@ -8,13 +8,12 @@ try:
 except:
     print('no speech recognition import')
 
-input_speech = False
-output_audio = False
-
 class Audio():
 
-    def __init__(self):
-        if input_speech:
+    def __init__(self, output_audio, input_speech):
+        self.output_audio = output_audio
+        self.input_speech = input_speech
+        if self.input_speech:
             self.recognizer =  sr.Recognizer()
             self.microphone = sr.Microphone() # Set appropriate device index, e.g `device_index=3`
             with self.microphone as source:
@@ -24,15 +23,8 @@ class Audio():
         if not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir)
 
-
-    def start_background_listening(self, callback):
-        self.stop_listening = self.recognizer.listen_in_background(self.microphone, callback)
-
-    def stop_background_listening(self):
-        self.stop_listening
-
     def speak(self, text):
-        if output_audio:
+        if self.output_audio:
             hash_object = hashlib.md5(text.encode())
             filename = os.path.join(self.cache_dir, hash_object.hexdigest()+".mp3")
             if not(os.path.isfile(filename)):
@@ -75,7 +67,7 @@ class Audio():
             "transcription": "",
         }
 
-        if input_speech:
+        if self.input_speech:
             # adjust the recognizer sensitivity to ambient noise and record audio
             # from the microphone
             with self.microphone as source:
@@ -98,6 +90,6 @@ class Audio():
                 print("Speech unintelligible")
                 response["error"] = "Unable to recognize speech"
         else:
-            response["transcription"] = str(input("speech? "))
+            response["transcription"] = str(input("> "))
 
         return response

@@ -4,7 +4,14 @@ class Riddles(App):
 
     def on_start(self):
         self.riddles = self.get_riddles()
-        self.app_instruction("This app will tell you riddles. The answer will be given in braille. It will pick up where you left off. You can browse by saying next, previous and again.")
+        self.instruction = """
+            Welcome to Riddles.
+            This app will tell you riddles.
+            The answer will be given in braille.
+            It will pick up where you left off.
+            You can browse by saying next, previous and again.
+        """
+        self.audio.speak("We are finding the most recently browsed new riddle.")
         self.next_riddle()
 
     def next_riddle(self):
@@ -13,12 +20,12 @@ class Riddles(App):
             self.settings['riddle_idx'] = 0
 
         riddle = self.riddles[self.settings['riddle_idx']]
-        self.audio.speak(
-            "Riddle number " + str(self.settings['riddle_idx'] + 1) + ": "
-            + riddle['question']
-        )
+        self.audio.speak("Riddle number:")
+        self.audio.speak(str(self.settings['riddle_idx'] + 1))
+        self.audio.speak(riddle['question'])
 
         self.print_text(riddle['answer'])
+        self.audio.speak("That was the answer.")
         self.settings['riddle_idx'] += 1
 
         response = self.await_response(['next', 'previous', 'again'])

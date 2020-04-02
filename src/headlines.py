@@ -17,11 +17,10 @@ class Headlines(App):
         "world":"world"
     }
 
-    def show_headlines(self,category, ptr):
-
+    def show_headlines(self, category, ptr):
+        self.audio.speak("We are fetching the articles.")
         article_ptr = ptr
         options = ["next","back","more","again","home"]
-        #instructions = "Say \"next\" or \"back\" to go to the next or the previous article, \"more\" if you would like to read more, \"again\" to read the headline again and \"home\" to return to the beginning."
         #Get RSS feed given catagory
         feed = feedparser.parse("http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/"+category+"/rss.xml")
 
@@ -61,13 +60,11 @@ class Headlines(App):
     def get_category_response(self, prompt, extended_prompt):
         #First time it is called, it shows the extended_prompt
         options = [c for c in self.categories]
-        first_attempt = True
 
-        if first_attempt:
-            self.audio.speak(prompt + extended_prompt)
-            first_attempt = False
-        else:
-            self.audio.speak(prompt)
+        self.audio.speak(prompt)
+        if self.first_attempt:
+            self.audio.speak(extended_prompt)
+            self.first_attempt = False            
 
         response = self.await_response(options)
         return response
@@ -77,6 +74,13 @@ class Headlines(App):
         self.show_headlines(self.categories[category], 0)
 
     def on_start(self):
-        #self.cells[0].print_character("a")
-        self.app_instruction("This will allow you to read the news in braille! To hear your options at any point say \"options\".")
+        self.instruction = """
+            Welcome to Headlines.
+            This will allow you to read the news in braille!
+            Say 'next' or 'back' to go to the next or the previous article,
+            'more' if you would like to read more,
+            'again' to read the headline again
+            and 'home' to return to the beginning.
+        """
+        self.first_attempt = True
         self.main()

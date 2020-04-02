@@ -7,14 +7,13 @@ class Memory(App):
     def on_start(self):
         num_cells = len(self.cells)
         if num_cells < 4 or num_cells % 2 != 0:
-            self.audio.speak("""
-                This game is meant to be played with an even number of cells, at least 4.
-                Right now there are """ + str(num_cells) + """ cells connected.
-            """)
+            self.audio.speak("This game is meant to be played with an even number of cells, at least 4. Right now the number of connected cells is:")
+            self.audio.speak(str(num_cells))
             self.on_quit()
         self.dict_idx = str(num_cells)
 
-        self.app_instruction("""
+        self.instruction = """
+            Welcome to Memory.
             This is the braille version of the traditional Memory card game.
             You can play it with one or two players. The Memory cards are the cells,
             each corresponding to a braille alphabet character.
@@ -30,7 +29,7 @@ class Memory(App):
             In solo mode, the number of turns is recorded, so that you
             can attempt to find all pairs in as little turns as possible.
             When playing together, the app will keep track of the score.
-        """)
+        """
         self.play_memory()
 
     def play_memory(self):
@@ -52,8 +51,10 @@ class Memory(App):
 
     def have_turn(self, player=0):
         self.num_turns += 1
-        if player != 0:
-            self.audio.speak("It is now player " + digit_dict[str(player)]['pronunciation'] + "'s turn.")
+        if player == 1:
+            self.audio.speak("It is now player one's turn.")
+        elif player == 2:
+            self.audio.speak("It is now player two's turn.")
         cell_idx1 = self.wait_for_flip()
         cell_idx2 = self.wait_for_flip()
         return cell_idx1, cell_idx2
@@ -62,7 +63,8 @@ class Memory(App):
         char1 = self.field[cell_idx1 - 1]
         char2 = self.field[cell_idx2 - 1]
         if char1 == char2:
-            self.audio.speak("You have found a match! This is the letter " + alphabet_dict[char1]['pronunciation'] + ".")
+            self.audio.speak("You have found a match! This is the letter:")
+            self.audio.speak(alphabet_dict[char1]['pronunciation'])
             self.score[player] += 1
             self.flipped_cells.append(cell_idx1)
             self.flipped_cells.append(cell_idx2)
@@ -72,7 +74,7 @@ class Memory(App):
 
     def next_turn(self, player):
         self.print_cells_to_terminal()
-        cell_idx1, cell_idx2 = self.have_turn()
+        cell_idx1, cell_idx2 = self.have_turn(player)
         is_match = self.check_for_match(cell_idx1, cell_idx2, player)
         self.check_game_done(player)
         self.await_response(["next"])
@@ -92,17 +94,20 @@ class Memory(App):
     def check_game_done(self, player):
         if sum(self.score) == int(len(self.field) / 2):
             if player == 0:
-                self.audio.speak("You have found all pairs in " + str(self.num_turns) + " turns.")
+                self.audio.speak("The number of turns it took you to find all pairs is:")
+                self.audio.speak(str(self.num_turns))
                 if not self.dict_idx in self.settings['high_scores'] or self.settings['high_scores'][self.dict_idx] > self.num_turns:
                     self.audio.speak("This is a new high score!")
                     self.settings['high_scores'][self.dict_idx] = self.num_turns
                 else:
-                    self.audio.speak("The current high score is " + str(self.settings['high_scores'][self.dict_idx]) + ".")
+                    self.audio.speak("The current high score is:")
+                    self.audio.speak(str(self.settings['high_scores'][self.dict_idx]))
             else:
-                self.audio.speak("""
-                    All pairs have been found. Player 1 has a score of """ + str(self.score[1]) + """
-                    and player 2 has a score of """ + str(self.score[2]) + """.
-                """)
+                self.audio.speak("All pairs have been found.")
+                self.audio.speak("Player 1 has a score of:")
+                self.audio.speak(str(self.score[1]))
+                self.audio.speak("Player 2 has a score of:")
+                self.audio.speak(str(self.score[2]))
                 if self.score[2] > self.score[1]:
                     self.audio.speak("Player 2 has won!")
                 elif self.score[1] > self.score[2]:

@@ -6,14 +6,16 @@ from characters import indicator_dict, character_dict
 # Abstract class that defines the methods amd attributes of Braille Apps.
 class App(ABC):
 
-    def __init__(self, name, cells, audio, arduino):
+    def __init__(self, name, cells, audio, arduino, mainApp):
         self.cells = cells
         self.audio = audio
         self.arduino = arduino
+        self.mainApp = mainApp
         self.name = name
+        self.instruction = "Welcome to " + self.name + ". This application does not have instructions yet."
         # settings
         filename = self.name.lower() + '_state'
-        self.filepath = os.path.join(os.path.dirname(__file__), 'app_states/' + filename + '.py')
+        self.filepath = os.path.join(os.path.dirname(__file__), 'app_states/' + filename + '.txt')
         self.settings = self.load_settings()
 
     @abstractmethod
@@ -27,11 +29,13 @@ class App(ABC):
         self.save_settings()
         self.reset_cells()
         # return to main thread
-        from main_functions import main_menu
-        main_menu(self.arduino, self.cells, self.audio)
+        self.mainApp.main_menu()
 
     def confirm_quit(self):
-        self.audio.speak("Would you like to quit this application?")
+        text = "Would you like to quit this application?"
+        if self.name == 'main':
+            text = "Would you like to quit louis?"
+        self.audio.speak(text)
         response = self.await_response(["yes","no"])
         # take answer from the user
         if response == "yes":
@@ -51,21 +55,14 @@ class App(ABC):
                 f.write(json.dumps(settings, indent=4))
         with open(self.filepath, 'r') as f:
             return json.loads(f.read())
-        # module = getattr(__import__('app_states', fromlist=[filename]), filename)
-        # return module.settings
 
     def save_settings(self):
         # Save app settings to local file system
         with open(self.filepath, 'w') as f:
             f.write(json.dumps(self.settings, indent=4))
 
-    def app_instruction(self, instruction):
-        self.audio.speak("Would you like to listen to an instruction for this application?")
-        response = self.await_response(['yes','no'])
-        if response == "yes":
-            self.audio.speak("Welcome to " + self.name + ". " + instruction)
-        elif response == "no":
-            self.audio.speak("skipping instruction")
+    def app_instruction(self):
+        self.audio.speak(self.instruction)
 
     def get_pressed_button(self):
         # Returns the index of the pressed cell button
@@ -82,6 +79,7 @@ class App(ABC):
         for cell in reversed(self.cells):
             cell.print_character(c)
         self.wait_for_all_cells_finished()
+        self.print_cells_to_terminal()
 
     def print_text(self, text):
         prepared_text = []
@@ -110,7 +108,6 @@ class App(ABC):
         for i in range(0,len(prepared_text)):
             to_print.append(prepared_text[i])
 
-            # TODO fix bug where the last characters stay the same as previous pagination when at end of sentence (doesn't go to zero)
             if len(to_print) == len(self.cells) or i == len(prepared_text)-1 :
                 # Letters need to be passed in reverse in order to be processed in parallel
                 padding = len(self.cells) - len(to_print) 
@@ -143,15 +140,21 @@ class App(ABC):
 
     def await_response(self, desired_responses = []):
         answer = self.audio.recognize_speech()["transcription"]
+        answer = answer.lower()
         invalid = True
 
         if answer.find("options") != -1:
-            desired_response_string = str(desired_responses).strip('[]')
-            self.audio.speak("Your options are: " + desired_response_string + '.')
+            self.audio.speak("Your options are:")
+            for option in desired_responses:
+                self.audio.speak("- "+option)
             invalid = False
         # quit / exit command listener
         elif answer.find('quit') != -1 or answer.find('exit') != -1:
             self.confirm_quit()
+            invalid = False
+        # help listener
+        elif answer.find('help') != -1:
+            self.app_instruction()
             invalid = False
 
         if len(desired_responses) == 0:
@@ -160,10 +163,9 @@ class App(ABC):
             for d_r in desired_responses:
                 if answer.find(d_r) != -1:
                     response = d_r
-                    print("You said: " + response)
                     return response
 
-        if invalid:
+        if answer != "" and invalid:
             self.audio.speak("Invalid option, please try again.")
 
         response = self.await_response(desired_responses)
