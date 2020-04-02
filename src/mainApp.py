@@ -22,6 +22,7 @@ class MainApp(App):
         filename = self.name.lower() + '_state'
         self.filepath = os.path.join(os.path.dirname(__file__), 'app_states/' + filename + '.txt')
         self.settings = self.load_settings()
+        self.main_settings = self.settings
 
         self.apps = ['riddles', 'learn', 'tutor', 'headlines', 'memory']
         self.instruction = """
@@ -29,6 +30,7 @@ class MainApp(App):
             You can quit louis and apps at any time by saying 'quit' or 'exit'.
             You can get more information and instructions by saying 'help'.
             You can hear your voice command options by saying 'options'.
+            You can change settings by saying 'settings'.
         """
         self.audio = Audio(self.settings['output_audio'], self.settings['input_speech'])
         self.arduino, self.cells = self.discover()
@@ -38,11 +40,14 @@ class MainApp(App):
         self.main_menu()
     
     def on_quit(self):
+        self.audio.speak("Goodbye.")
+        self.save_settings()
+        self.reset_cells()
         sys.exit()
 
     def discover(self):
         print("Louis has started. Running cell discovery ...")
-        arduino = Arduino()
+        arduino = Arduino(main_cell=self.settings['main_cell'])
         time.sleep(2)
         num_cells = arduino.discover()
         print(num_cells)
