@@ -1,17 +1,20 @@
 #! /usr/bin/python3
 import time
 start = time.time()
+from mainApp import MainApp
 
-from main_functions import discover
-arduino, cells = discover()
+mainApp = MainApp()
 
 start_louis = time.time()
 
-for letter in ['l', 'ou', 'i', 's']:
-        print('Ready for next letter')
-        cells[0].wait_for_button_press()
-        for cell in reversed(cells):
+while True:
+    for letter in ['l', 'ou', 'i', 's']:
+        time.sleep(1)
+        for cell in reversed(mainApp.cells):
             cell.print_character(letter)
+        mainApp.print_cells_to_terminal()
+    cell.reset(' ')
+    mainApp.print_cells_to_terminal()
 
 end = time.time()
 print("\nTime program:" + str(end - start_louis))
